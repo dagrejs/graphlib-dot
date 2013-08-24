@@ -9,10 +9,6 @@ var examples = [
   fs.readFileSync(__dirname + '/fixtures/barabasi_5_1_4.dot', 'utf8')
 ]
 
-var stringify = require('../lib/stringify')
-
-//var assert = require('assert')
-//  .deepEqual(dot.parse(_d), dot.parse(d))
 
 describe("dot.encode", function() {
   describe("encode", function() {
