@@ -1,24 +1,24 @@
 {
-  "name": "dagre",
-  "version": "0.1.0",
-  "description": "Directed graph rendering",
-  "main": "index.js",
+  "name": "graphlib",
+  "version": "1.0.0",
+  "description": "parse dot files for graphlib",
+  "main": "lib/dot.js",
   "directories": {
     "src": "src",
     "test": "test"
   },
   "scripts": {
-    "test": "make test"
+    "test": "mocha test/*.js",
+    "build": "pegjs -e 'module.exports' src/dot-grammar.pegjs lib/dot-grammar.js"
   },
   "keywords": [
-    "graph"
+    "graph", "dot", "parse"
   ],
   "devDependencies": {
     "browserify": "2.28.x",
     "chai": "1.7.x",
     "mocha": "1.12.x",
-    "pegjs": "0.7.x",
-    "uglify-js": "1.2.3"
+    "pegjs": "0.7.x"
   },
   "dependencies": {
     "graphlib": "0.0.1"
@@ -31,7 +31,7 @@
   "license": "MIT",
   "testling": {
     "files": [
-      "test/**/*.js"
+      "test/*.js"
     ],
     "browsers": [
       "ie/8..latest",
