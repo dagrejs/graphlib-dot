@@ -13,11 +13,14 @@ parse `dot` format into `graphlib` api.
 ``` js
 
 var fs = require('fs')
-var dot = requrie('graphlib-dot')
+var DOT = requrie('graphlib-dot')
 
-var graph = dot.decode(fs.readFileSync('your-dot-file.dot'))
+var graph = DOT.decode(fs.readFileSync('your-dot-file.dot'))
 //then you can pass this to dagre or some other graphlib compatible
 //graph library.
+
+//also encode a graph back to a string!
+console.log(DOT.encode(graph))
 ```
 
 see also [dagre](https://github.com/cpettitt/dagre)
