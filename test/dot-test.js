@@ -1,4 +1,6 @@
 var common = require("./common"),
+    path = require("path"),
+    fs = require("fs"),
     assert = require("chai").assert,
     dot = require("../lib/dot");
 
@@ -124,6 +126,27 @@ describe("lib/dot", function() {
       assert.equal(g.node("x").prop, 123);
       assert.equal(g.node("y").prop, 123);
       assert.equal(g.node("z").prop, 456);
+    });
+
+    describe("it can parse all files in test-data", function() {
+      var testDataDir = path.resolve(__dirname, "test-data");
+      fs.readdirSync(testDataDir).forEach(function(file) {
+        it(file, function() {
+          var f = fs.readFileSync(path.resolve(testDataDir, file), "UTF-8");
+          dot.toGraph(f);
+        });
+      });
+    });
+  });
+
+  describe("it can write and parse without loss", function() {
+    var testDataDir = path.resolve(__dirname, "test-data");
+    fs.readdirSync(testDataDir).forEach(function(file) {
+      it(file, function() {
+        var f = fs.readFileSync(path.resolve(testDataDir, file), "UTF-8");
+        var g = dot.toGraph(f);
+        assert.deepEqual(dot.decode(dot.encode(g)), g);
+      });
     });
   });
 
