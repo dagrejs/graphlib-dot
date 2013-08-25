@@ -1,6 +1,6 @@
 var common = require("./common"),
     path = require("path"),
-    fs = require("fs"),
+    fs = common.fs,
     assert = require("chai").assert,
     dot = require("../lib/dot");
 
