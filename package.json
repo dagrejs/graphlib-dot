@@ -8,8 +8,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/*.js",
-    "build": "pegjs -e 'module.exports' src/dot-grammar.pegjs lib/dot-grammar.js"
+    "test": "make test",
+    "build": "make"
   },
   "keywords": [
     "graph", "dot", "parse"
