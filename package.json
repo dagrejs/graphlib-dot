@@ -1,7 +1,7 @@
 {
   "name": "graphlib-dot",
   "version": "1.2.0",
-  "description": "parse dot files for graphlib",
+  "description": "A DOT language parser / writer for graphlib",
   "main": "lib/dot.js",
   "directories": {
     "src": "src",
@@ -24,6 +24,9 @@
     "graphlib": "0.0.1"
   },
   "author": "Chris Pettitt <chris@samsarin.com>",
+  "contributors": [
+    "Dominic Tarr <dominic.tarr@gmail.com> (http://bit.ly/dominictarr)"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/cpettitt/dagre.git"
