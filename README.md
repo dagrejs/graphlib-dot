@@ -2,11 +2,9 @@
 
 A DOT language parser / writer for [graphlib](https://github.com/cpettitt/graphlib).
 
-<!--
 [![Build Status](https://secure.travis-ci.org/cpettitt/graphlib-dot.png)](http://travis-ci.org/cpettitt/graphlib-dot)
 
 [![browser support](https://ci.testling.com/cpettitt/graphlib-dot.png)](https://ci.testling.com/cpettitt/graphlib-dot)
--->
 
 ## Build / Install
 
