@@ -19,7 +19,8 @@
     "chai": "1.7.x",
     "dox-foundation": "~0.5.2",
     "mocha": "1.12.x",
-    "pegjs": "0.7.x"
+    "pegjs": "0.7.x",
+    "uglify-js": "1.2.3"
   },
   "dependencies": {
     "graphlib": "0.0.1"
