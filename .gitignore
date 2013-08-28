@@ -1,4 +1,4 @@
-/doc
-/graphlib-dot.min.js
-/graphlib-dot.js
+/dist
+/lib/dot-grammar.js
+/lib/version.js
 /node_modules

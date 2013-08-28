@@ -1,6 +1,6 @@
 {
   "name": "graphlib-dot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A DOT language parser / writer for graphlib",
   "main": "lib/dot.js",
   "directories": {
@@ -20,6 +20,7 @@
     "dox-foundation": "~0.5.2",
     "mocha": "1.12.x",
     "pegjs": "0.7.x",
+    "semver": "2.1.x",
     "uglify-js": "1.2.3"
   },
   "dependencies": {
