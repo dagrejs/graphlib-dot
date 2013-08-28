@@ -53,9 +53,11 @@ lib/dot-grammar.js: src/dot-grammar.pegjs $(NODE_MODULES)
 $(NODE_MODULES): package.json
 	$(NPM) install
 
-$(DOC): lib/parse.js lib/write.js
-	@rm -rf $@
-	$(NODE) $(DOCGEN) --source lib/parse.js,lib/write.js --target $@
+$(DOC): init lib/parse.js lib/write.js
+	@rm -rf doc $@
+	mkdir doc
+	$(NODE) $(DOCGEN) --source lib/parse.js,lib/write.js --target doc
+	mv doc $(DOC)
 
 .PHONY: test
 test: $(MODULE_JS) $(JS_TEST)
