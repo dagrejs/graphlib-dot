@@ -1,6 +1,6 @@
 {
   "name": "graphlib-dot",
-  "version": "0.0.3-pre",
+  "version": "0.0.3",
   "description": "A DOT language parser / writer for graphlib",
   "main": "lib/dot.js",
   "directories": {
