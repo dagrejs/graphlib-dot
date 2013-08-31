@@ -108,8 +108,8 @@ describe("lib/dot", function() {
     it("applies edge attributes to all nodes in a subgraph", function() {
       var d = "digraph { x -> {y; z} [prop=123] }";
       var g = dot.parse(d);
-      assert.equal(g.edge(g.edges("x", "y")[0]).prop, 123);
-      assert.equal(g.edge(g.edges("x", "z")[0]).prop, 123);
+      assert.equal(g.edge(g.outEdges("x", "y")[0]).prop, 123);
+      assert.equal(g.edge(g.outEdges("x", "z")[0]).prop, 123);
     });
 
     it("only applies attributes in a subgraph to nodes created in that subgraph", function() {
@@ -161,7 +161,7 @@ describe("lib/dot", function() {
 
       var g = gs[0];
       assert.deepEqual(g.nodes().sort(), ["A", "B", "C"]);
-      assert.equal(g.edges("A", "B").length, 1);
+      assert.equal(g.outEdges("A", "B").length, 1);
     });
 
     it("parses multiple graphs", function() {
