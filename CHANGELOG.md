@@ -1,3 +1,9 @@
+v0.1.0
+======
+
+* Initial support for parsing undirected graphs as a `Graph`, as opposed to a
+  `Digraph` with 2 edges for each edge in the source graph.
+
 v0.0.4
 ======
 
