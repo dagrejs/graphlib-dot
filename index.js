@@ -1,5 +1,6 @@
 var parse = require("./lib/parse"),
-    write = require("./lib/write");
+    write = require("./lib/write"),
+    version = require("./lib/version");
 
 module.exports = {
   parse: parse,
@@ -9,6 +10,8 @@ module.exports = {
 
   write: write,
   encode: write,
+
+  version: version,
 
   // For levelup encoding
   type: "dot",
