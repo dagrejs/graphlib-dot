@@ -1,16 +1,25 @@
 set -e
 [ -n "$DEBUG" ] && set -x
 
-PROJECT=graphlib-dot
-VERSION=$(node src/release/check-version.js)
-
 bail() {
     echo $1 >&2
     exit 1
 }
 
+usage() {
+    bail "usage: $0 <MODULE_NAME> <DIST_DIR>"
+}
+
 # Preflight checks
 # ----------------
+
+PROJECT=$1
+DIST_DIR=$2
+VERSION=$(node src/release/check-version.js)
+
+[ -n "$PROJECT" ] || usage
+[ -n "$DIST_DIR" ] || usage
+[ -n "$VERSION" ] || bail "ERROR: Could not determine version from package.json"
 
 echo Attempting to publish version: $VERSION
 
@@ -40,11 +49,11 @@ cd $PUB_ROOT
 mkdir -p project/$PROJECT
 TARGET=project/$PROJECT/latest
 git rm -r $TARGET || true
-cp -r $PROJECT_ROOT/dist $TARGET
+cp -r $PROJECT_ROOT/$DIST_DIR $TARGET
 git add $TARGET
 
 TARGET=project/$PROJECT/v$VERSION
-cp -r $PROJECT_ROOT/dist $TARGET
+cp -r $PROJECT_ROOT/$DIST_DIR $TARGET
 git add $TARGET
 
 git ci -m "Publish $PROJECT v$VERSION"

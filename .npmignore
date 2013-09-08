@@ -1,6 +1,9 @@
-/Makefile
 /browser.js
-/dist
+/coverage.html
+/doc
+/lib/dot-grammar.js
+/Makefile
 /node_modules
+/out
 /src
 /test

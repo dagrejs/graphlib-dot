@@ -1,0 +1,59 @@
+h2#function Functions
+:markdown
+    This module exports a few functions for parsing and writing graphs in the
+    DOT langauge. To use these functions, use `var dot =
+    require("graphlib-dot");`.
+
+h3#function-parse parse()
+:markdown
+    Parses a single DOT graph from the `str` and returns it as one of:
+
+    * `Digraph` if the input graph is `digraph`
+    * `Graph` if the input graph is a `graph`
+
+    ```js
+    var parse = require("graphlib-dot").parse;
+
+    var digraph = parse("digraph { 1; 2; 1 -> 2 [label=\"label\"] }");
+    digraph.nodes();
+    // => [ "1", "2" ]
+
+    digraph.edge(digraph.edges()[0]);
+    // => { label: "label", id: /* unique id here */ }
+    ```
+
+h3#function-parseMany parseMany(str)
+:markdown
+    Parses one or more DOT graphs from `str` in a manner similar to that used
+    by [parse](#function-parse) for individual graphs.
+
+    ```js
+    var parseMany = require("graphlib-dot").parseMany;
+
+    var digraphs = parseMany("digraph { 1; 2; 1 -> 2 [label=\"label\"] }\n" +
+                             "digraph { A; B; }");
+    digraphs.length;
+    // => 2
+    ```
+
+h3#function-write write(graph)
+:markdown
+    Writes a `String` representation of the given `graph` in the DOT language.
+
+    ```js
+    var Digraph = require("graphlib").Digraph,
+        write = require("graphlib-dot").write;
+
+    var digraph = new Digraph();
+    digraph.addNode(1);
+    digraph.addNode(2);
+    digraph.addEdge("A", 1, 2, { label: "A label" });
+    console.log(write(digraph));
+    // Prints:
+    //
+    //  digraph {
+    //      "1"
+    //      "2"
+    //      "1" -> "2" ["label"="A label"]
+    //  }
+    ```

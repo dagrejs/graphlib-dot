@@ -1,73 +1,78 @@
 NODE?=node
 NPM?=npm
-NODE_MODULES=node_modules
-BROWSERIFY?=$(NODE_MODULES)/browserify/bin/cmd.js
-PEGJS?=$(NODE_MODULES)/pegjs/bin/pegjs
-MOCHA?=$(NODE_MODULES)/mocha/bin/mocha
+BROWSERIFY?=node_modules/browserify/bin/cmd.js
+PEGJS?=node_modules/pegjs/bin/pegjs
+MOCHA?=node_modules/mocha/bin/mocha
 MOCHA_OPTS?=
-JS_COMPILER=$(NODE_MODULES)/uglify-js/bin/uglifyjs
+JS_COMPILER=node_modules/uglify-js/bin/uglifyjs
 JS_COMPILER_OPTS?=--no-seqs
-DOCGEN=$(NODE_MODULES)/dox-foundation/bin/dox-foundation
 
 MODULE=graphlib-dot
-DIST?=dist
-MODULE_JS=$(DIST)/$(MODULE).js
-MODULE_MIN_JS=$(DIST)/$(MODULE).min.js
-DOC=$(DIST)/doc
 
 # There does not appear to be an easy way to define recursive expansion, so
 # we do our own expansion a few levels deep.
 JS_SRC:=$(wildcard lib/*.js lib/*/*.js lib/*/*/*.js)
 JS_TEST:=$(wildcard test/*.js test/*/*.js test/*/*/*.js)
 
+DOC_JADE:=$(wildcard doc/*.jade)
+DOC_JADE_OUT:=$(addprefix out/dist/, $(DOC_JADE:.jade=.html))
+
+DOC_STATIC:=$(wildcard doc/static/*)
+DOC_STATIC_OUT:=$(addprefix out/dist/, $(DOC_STATIC))
+
 BENCH_FILES?=$(wildcard bench/graphs/*)
 
-.PHONY: all
-all: $(MODULE_JS) $(MODULE_MIN_JS) $(DOC) test
+OUT_DIRS=out out/dist out/dist/doc out/dist/doc/static
 
-.PHONY: init
-init:
-	rm -rf $(DIST)
-	mkdir -p $(DIST)
+.PHONY: all release dist doc test coverage clean clean-doc fullclean
 
-.PHONY: release
+all: dist doc test coverage
+
 release: all
-	src/release/release.sh
+	src/release/release.sh $(MODULE) out/dist
 
-$(MODULE_JS): init Makefile $(NODE_MODULES) browser.js lib/dot-grammar.js lib/version.js $(JS_SRC)
-	@rm -f $@
-	$(NODE) $(BROWSERIFY) browser.js > $@
-	@chmod a-w $@
+dist: out/dist/$(MODULE).js out/dist/$(MODULE).min.js
 
-$(MODULE_MIN_JS): $(MODULE_JS)
-	@rm -f $@
-	$(NODE) $(JS_COMPILER) $(JS_COMPILER_OPTS) $< > $@
-	@chmod a-w $@
+doc: node_modules src/docgen.js clean-doc out/dist/doc out/dist/doc/static $(DOC_JADE_OUT) $(DOC_STATIC_OUT)
 
-lib/version.js: src/version.js package.json
-	$(NODE) src/version.js > $@
+test: out/dist/$(MODULE).js $(JS_TEST)
+	$(NODE) $(MOCHA) $(JS_TEST) $(MOCHA_OPTS)
 
-lib/dot-grammar.js: src/dot-grammar.pegjs $(NODE_MODULES)
-	$(NODE) $(PEGJS) -e 'module.exports' src/dot-grammar.pegjs $@
+coverage: out/coverage.html
 
-$(NODE_MODULES): package.json
-	$(NPM) install
-
-$(DOC): init lib/parse.js lib/write.js
-	@rm -rf doc $@
-	mkdir doc
-	$(NODE) $(DOCGEN) --source lib/parse.js,lib/write.js --target doc
-	mv doc $(DOC)
-
-.PHONY: test
-test: $(MODULE_JS) $(JS_TEST)
-	$(NODE) $(MOCHA) $(MOCHA_OPTS) $(JS_TEST)
-
-.PHONY: clean
 clean:
 	rm -f lib/version.js lib/dot.grammar.js
-	rm -rf $(DIST)
+	rm -rf out
 
-.PHONY: fullclean
+clean-doc:
+	rm -rf out/dist/doc
+
 fullclean: clean
-	rm -rf $(NODE_MODULES)
+	rm -rf node_modules
+
+$(OUT_DIRS):
+	mkdir -p $@
+
+out/dist/$(MODULE).js: browser.js Makefile out/dist node_modules lib/dot-grammar.js lib/version.js $(JS_SRC)
+	$(NODE) $(BROWSERIFY) $< > $@
+
+out/dist/$(MODULE).min.js: out/dist/$(MODULE).js
+	$(NODE) $(JS_COMPILER) $(JS_COMPILER_OPTS) $< > $@
+
+$(DOC_JADE_OUT): $(DOC_JADE)
+	$(NODE) src/docgen.js $< > $@
+
+out/dist/doc/static/%: doc/static/%
+	@cp $< $@
+
+out/coverage.html: $(MODULE_JS) $(JS_TEST)
+	$(NODE) $(MOCHA) $(JS_TEST) --require blanket -R html-cov > $@
+
+lib/version.js: src/version.js package.json
+	$(NODE) $< > $@
+
+lib/dot-grammar.js: src/dot-grammar.pegjs node_modules
+	$(NODE) $(PEGJS) -e 'module.exports' $< $@
+
+node_modules: package.json
+	$(NPM) install
