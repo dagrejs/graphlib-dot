@@ -2,7 +2,7 @@ var common = require("./common"),
     path = require("path"),
     fs = common.fs,
     assert = require("chai").assert,
-    dot = require("../lib/dot");
+    dot = require("..");
 
 describe("lib/dot", function() {
   describe("parse", function() {
@@ -20,7 +20,7 @@ describe("lib/dot", function() {
 
       assert.equal(g.node("n2").color, "black");
       assert.equal(g.node("n2").shape, "box");
-      assert.equal(g.node("n2").label, "n2");    
+      assert.equal(g.node("n2").label, "n2");
     });
 
     it("combines multiple default attribute statements", function() {
