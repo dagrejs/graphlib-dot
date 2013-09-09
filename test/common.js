@@ -1,5 +1,6 @@
 var chai = require("chai");
 chai.Assertion.includeStack = true;
+exports.assert = chai.assert;
 
 // If we're running in a browserified environment, such as testling, we don't
 // have access to the fs module. We just get an empty object from
