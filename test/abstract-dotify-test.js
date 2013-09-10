@@ -45,20 +45,25 @@ module.exports = function(name, Constructor) {
     });
 
     describe("subgraph", function() {
-      it("is undefined when no initial value is assigned", function() {
+      it("is an empty object when no initial value is assigned", function() {
         g.addSubgraph("sg1");
-        assert.isUndefined(g.subgraph("sg1"));
+        assert.deepEqual(g.subgraph("sg1"), {});
       });
 
       it("returns the value assigned to the subgraph with 1 argument", function() {
-        g.addSubgraph("sg1", "value");
-        assert.equal(g.subgraph("sg1"), "value");
+        g.addSubgraph("sg1", {a: "a-value"});
+        assert.deepEqual(g.subgraph("sg1"), {a: "a-value"});
       });
 
       it("assigns a value ot the subgraph with 2 arguments", function() {
         g.addSubgraph("sg1");
-        g.subgraph("sg1", "value");
-        assert.equal(g.subgraph("sg1"), "value");
+        g.subgraph("sg1", {a: "a-value"});
+        assert.deepEqual(g.subgraph("sg1"), {a: "a-value"});
+      });
+
+      it("only allows objects as value", function() {
+        g.addSubgraph("sg1");
+        assert.throws(function() { g.subgraph("sg1", "string"); });
       });
     });
 
@@ -149,6 +154,47 @@ module.exports = function(name, Constructor) {
       });
     });
 
+    describe("addNode", function() {
+      it("defaults to an empty object for value", function() {
+        g.addNode(1);
+        assert.deepEqual(g.node(1), {});
+      });
+
+      it("only allows objects for value", function() {
+        g.addNode(1, {});
+        assert.throws(function() { g.addNode(2, "string"); });
+      });
+    });
+
+    describe("node", function() {
+      it("only allows objects for value", function() {
+        g.addNode(1);
+        assert.throws(function() { g.node(1, "string"); });
+      });
+    });
+
+    describe("addEdge", function() {
+      it("defaults to an empty object for value", function() {
+        g.addNode(1);
+        g.addEdge("A", 1, 1);
+        assert.deepEqual(g.edge("A"), {});
+      });
+
+      it("only allows objects for value", function() {
+        g.addNode(1);
+        g.addEdge("A", 1, 1, {});
+        assert.throws(function() { g.addEdge("B", 1, 1, "string"); });
+      });
+    });
+
+    describe("edge", function() {
+      it("only allows objects for value", function() {
+        g.addNode(1);
+        g.addEdge("A", 1, 1);
+        assert.throws(function() { g.edge("A", "string"); });
+      });
+    });
+
     describe("addSubgraph", function() {
       it("adds a new subgraph to the graph", function() {
         var id = g.addSubgraph("subgraph1");
@@ -220,7 +266,7 @@ module.exports = function(name, Constructor) {
       });
 
       it("removes the value information", function() {
-        g.addSubgraph("sg1", 123);
+        g.addSubgraph("sg1", {a: "a-value"});
         g.delSubgraph("sg1");
         assert.throws(function() { g.subgraph("sg1"); });
       });
