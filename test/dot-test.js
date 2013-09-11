@@ -2,13 +2,63 @@ var common = require("./common"),
     path = require("path"),
     fs = common.fs,
     assert = common.assert,
-    dot = require("..");
+    dot = require(".."),
+    DotGraph = require("..").DotGraph,
+    DotDigraph = require("..").DotDigraph;
 
-describe("lib/dot", function() {
+describe("dot", function() {
   describe("parse", function() {
-    it("allows an empty label", function() {
+    it("can parse an empty digraph", function() {
+      var g = dot.parse("digraph {}");
+      assert.instanceOf(g, DotDigraph);
+    });
+
+    it("can parse an empty graph", function() {
+      var g = dot.parse("graph {}");
+      assert.instanceOf(g, DotGraph);
+    });
+
+    it("can parse a simple node", function() {
+      var g = dot.parse("digraph { a }");
+      assert.sameMembers(g.nodes(), ["a"]);
+    });
+
+    it("can parse a node with an empty attribute", function() {
       var g = dot.parse("digraph { a [label=\"\"]; }");
       assert.equal(g.node("a").label, "");
+    });
+
+    it("can parse a simple undirected edge", function() {
+      var g = dot.parse("graph { a -- b }");
+      assert.sameMembers(g.nodes(), ["a", "b"]);
+      assert.lengthOf(g.edges(), 1);
+      assert.sameMembers(g.incidentNodes(g.edges()[0]), ["a", "b"]);
+    });
+
+    it("can parse a simple directed edge", function() {
+      var g = dot.parse("digraph { a -> b }");
+      assert.sameMembers(g.nodes(), ["a", "b"]);
+      assert.lengthOf(g.edges(), 1);
+      assert.equal(g.source(g.edges()[0]), "a");
+      assert.equal(g.target(g.edges()[0]), "b");
+    });
+
+    it("can parse a simple subgraph", function() {
+      var g = dot.parse("digraph { subgraph X {} }");
+      assert.sameMembers(g.subgraphs(), ["X"]);
+    });
+
+    it("can parse an anonymous subgraph", function() {
+      var g = dot.parse("digraph { subgraph {} }");
+      assert.lengthOf(g.subgraphs(), 1);
+      assert.isNotNull(g.subgraphs()[0]);
+    });
+
+    it("can parse nodes in a subgraph", function() {
+      var g = dot.parse("digraph { subgraph X { a; b }; c }");
+      assert.sameMembers(g.nodes(), ["a", "b", "c"]);
+      assert.sameMembers(g.children(null).map(function(x) { return x.id; }), ["X", "c"]);
+      assert.sameMembers(g.children("X").map(function(x) { return x.id; }), ["a", "b"]);
     });
 
     it("adds default attributes to nodes", function() {
@@ -145,7 +195,7 @@ describe("lib/dot", function() {
       it(file, function() {
         var f = fs.readFileSync(path.resolve(testDataDir, file), "UTF-8");
         var g = dot.parse(f);
-        assert.deepEqual(dot.decode(dot.encode(g)), g);
+        assert.deepEqual(dot.parse(dot.write(g)), g);
       });
     });
   });
