@@ -55,7 +55,7 @@ module.exports = function(name, Constructor) {
         assert.deepEqual(g.subgraph("sg1"), {a: "a-value"});
       });
 
-      it("assigns a value ot the subgraph with 2 arguments", function() {
+      it("assigns a value to the subgraph with 2 arguments", function() {
         g.addSubgraph("sg1");
         g.subgraph("sg1", {a: "a-value"});
         assert.deepEqual(g.subgraph("sg1"), {a: "a-value"});
@@ -99,6 +99,13 @@ module.exports = function(name, Constructor) {
         g.parent(1, "sg1");
         assert.equal(g.parent(1), "sg1");
         assert.lengthOf(g.children("sg1"), 1);
+      });
+
+      it("removes the current parent with 2 arguments", function() {
+        g.addNode(1);
+        g.addSubgraph("sg1");
+        g.parent(1, "sg1");
+        assert.deepEqual(g.children(null).map(function(x) { return x.id; }), ["sg1"]);
       });
 
       it("sets the parent to root if it is null", function() {
