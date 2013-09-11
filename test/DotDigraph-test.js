@@ -1,2 +1,5 @@
 var DotDigraph = require("..").DotDigraph;
-require("./abstract-dotify-test.js")("DotDigraph", DotDigraph);
+
+describe("DotDigraph", function() {
+  require("./abstract-dotify-test.js")("DotDigraph", DotDigraph);
+});
