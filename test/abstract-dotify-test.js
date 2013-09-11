@@ -192,6 +192,12 @@ module.exports = function(name, Constructor) {
         g.addEdge("A", 1, 1, {});
         assert.throws(function() { g.addEdge("B", 1, 1, "string"); });
       });
+
+      it("returns the id used for the edge", function() {
+        g.addNode(1);
+        assert.equal(g.addEdge("A", 1, 1, {}), "A");
+        assert.isDefined(g.addEdge(null, 1, 1, {}));
+      });
     });
 
     describe("edge", function() {
