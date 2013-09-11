@@ -160,6 +160,12 @@ module.exports = function(name, Constructor) {
     });
   });
 
+  describe("graph", function() {
+    it("only allows objects for value", function() {
+      assert.throws(function() { g.graph("string"); });
+    });
+  });
+
   describe("addNode", function() {
     it("defaults to an empty object for value", function() {
       g.addNode(1);
