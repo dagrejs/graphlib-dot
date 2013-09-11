@@ -61,6 +61,17 @@ describe("dot", function() {
       assert.sameMembers(g.children("X").map(function(x) { return x.id; }), ["a", "b"]);
     });
 
+    it("can parse edges in a subgraph", function() {
+      var g = dot.parse("digraph { subgraph X { a; b; a -> b } }");
+      assert.sameMembers(g.nodes(), ["a", "b"]);
+      assert.sameMembers(g.children(null).map(function(x) { return x.id; }), ["X"]);
+      assert.lengthOf(g.edges(), 1);
+
+      var edgeId = g.edges()[0];
+      assert.equal(g.parent(edgeId), "X");
+      assert.sameMembers(g.children("X").map(function(x) { return x.id; }), ["a", "b", edgeId]);
+    });
+
     it("adds default attributes to nodes", function() {
       var d = "digraph { node [color=black shape=box]; n1 [label=\"n1\"]; n2 [label=\"n2\"]; n1 -> n2; }";
       var g = dot.parse(d);
