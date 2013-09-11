@@ -271,69 +271,9 @@ module.exports = function(name, Constructor) {
         assert.throws(function() { g.subgraph("sg1"); });
       });
 
-      it("removes default information", function() {
-        g.addSubgraph("sg1");
-        g.delSubgraph("sg1");
-        assert.throws(function() { g.defaults("sg1", "node", "string"); });
-        assert.throws(function() { g.defaults("sg1", "edge", "string"); });
-        assert.throws(function() { g.defaults("sg1", "subgraph", "string"); });
-      });
-
       it("throws an error for non-subgraphs", function() {
         g.addNode(1);
         assert.throws(function() { g.delSubgraph(1); });
-      });
-    });
-
-    describe("defaults", function() {
-      it("returns an empty object by default", function() {
-        assert.deepEqual(g.defaults(null, "node"), {});
-        assert.deepEqual(g.defaults(null, "edge"), {});
-        assert.deepEqual(g.defaults(null, "subgraph"), {});
-      });
-
-      it("assigns a default for a call with 3 arguments", function() {
-        g.defaults(null, "node", {a: "a-value"});
-        assert.deepEqual(g.defaults(null, "node"), {a: "a-value"});
-
-        g.defaults(null, "edge", {b: "b-value"});
-        assert.deepEqual(g.defaults(null, "edge"), {b: "b-value"});
-
-        g.defaults(null, "subgraph", {c: "c-value"});
-        assert.deepEqual(g.defaults(null, "subgraph"), {c: "c-value"});
-      });
-
-      it("does not allow non objects for default values", function() {
-        assert.throws(function() { g.defaults(null, "node", "string"); });
-        assert.throws(function() { g.defaults(null, "edge", "string"); });
-        assert.throws(function() { g.defaults(null, "subgraph", "string"); });
-      });
-
-      it("does not allow defaults to be assigned to non-subgraphs", function() {
-        g.addNode(1);
-        g.addEdge("A", 1, 1);
-        assert.throws(function() { g.defaults(1, "node", {}); });
-        assert.throws(function() { g.defaults("A", "node", {}); });
-      });
-
-      it("does not allow defaults for types outside of ['node', 'edge', 'subgraph']", function() {
-        assert.throws(function() { g.defaults(null, "some-other-object", {}); });
-      });
-
-      it("allows defaults to be applied to subgraphs", function() {
-        g.addSubgraph("sg1");
-
-        g.defaults("sg1", "node", {a: "a-value"});
-        assert.deepEqual(g.defaults("sg1", "node"), {a: "a-value"});
-        assert.deepEqual(g.defaults(null, "node"), {});
-
-        g.defaults("sg1", "edge", {b: "b-value"});
-        assert.deepEqual(g.defaults("sg1", "edge"), {b: "b-value"});
-        assert.deepEqual(g.defaults(null, "edge"), {});
-
-        g.defaults("sg1", "subgraph", {c: "c-value"});
-        assert.deepEqual(g.defaults("sg1", "subgraph"), {c: "c-value"});
-        assert.deepEqual(g.defaults(null, "subgraph"), {});
       });
     });
   });
