@@ -20,4 +20,67 @@ html(lang="en")
                 [DOT language]: http://www.graphviz.org/doc/info/lang.html
                 [graphlib]: https://github.com/cpettitt/graphlib
 
+            h2 Relationship to Graphlib
+            :markdown
+                This library adds two new graph types:
+
+                1. DotGraph (prototype is [Graph][])
+                2. DotDigraph (prototype is [Digraph][])
+
+                The difference between the DOT graphs and their graphlib equivalents is the addition of subgraphs and the requirement
+                that the values of nodes, edges, and graphs are Objects.
+
+                The DOT graphs described here differ from their graphlib
+                equivalents in three ways:
+
+                1. The addition of subgraphs
+                2. All objects in the graph have Object values.
+                3. All objects in the graph share the same id namespace.
+
+            h3 Subgraphs
+            :markdown
+                A subgraph provides a mechanism for representing composition of
+                nodes and edges. Each node and edge has either the root graph
+                or a subgraph as its parent. The root graph has the id `null`,
+                which subgraphs can have arbitrary non-`null` ids.
+
+                ```js
+                var g = new DotDigraph();
+                g.addNode(1);
+                g.parent(1);
+                // => null
+                g.children(null);
+                // => [1]
+
+                g.addSubgraph("sg1");
+                g.parent(1, "sg1");
+                g.parent(1);
+                // => "sg1"
+                g.children("sg1");
+                // => [1]
+                g.children(null);
+                // => []
+                ```
+
+                All nodes and edges can still be found using `g.nodes()` and
+                `g.edges()` regardless of their parent.
+
+            h3 Object Values
+            :markdown
+                As mentioned, values for nodes, edges, and graphs must always
+                be an `Object`. When a node, edge, or graph is created with a
+                default value it is assigned the empty object (`{}`) instead of
+                `undefined`.
+
+            h3 Shared Object Namespace
+            :markdown
+                All objects (node, edge, graph) in the DOT graph share the same
+                namespace. This ensures that they can be uniquely identified
+                when using functions like `parent` and `children`.
+
+                [Graph]: http://cpettitt.github.io/project/graphlib/latest/doc/index.html#Graph
+                [Digraph]: http://cpettitt.github.io/project/graphlib/latest/doc/index.html#Digraph
+
+            include include/DotDigraph
+            include include/DotGraph
             include include/function

@@ -1,0 +1,152 @@
+h2#DotGraph DotGraph
+:markdown
+
+    A `Graph` with support for composition using subgraphs. The following code
+    creates a new instance of `DotGraph`:
+
+    ```js
+    var DotGraph = require("graphlib-dot").DotGraph;
+    var graph = new DotGraph();
+    ```
+h3#DotGraph-hasSubgraph graph.hasSubgraph(id)
+:markdown
+    Returns `true` if the subgraph with the id `id` is a member of this graph
+    and `false` if not.
+
+    ```js
+    graph.hasSubgraph("sg1");
+    // => false
+
+    graph.addSubgraph("sg1");
+    graph.hasSubgraph("sg1");
+    // => true
+
+h3#DotGraph-subgraph graph.subgraph(id, [value])
+:markdown
+    This function provides a mechansim to get and set a user-defined value on
+    an individual subgraph. With one argument this function returns the value
+    currently assiged to the subgraph with the id `id`. With two arguments
+    this function replaces the current value of the subgraph `id` with `value`.
+    The initial value for a subgraph is the empty Object (`{}`).
+
+    If there is no subgraph `id` in the graph this function will throw an
+    `Error`. It will also throw an `Error` if the value supplied is not an
+    Object.
+
+    ```js
+    graph.addSubgraph("sg1");
+    graph.subgraph("sg1");
+    // => {}
+
+    graph.subgraph("sg1", {a: "xyz"});
+    graph.subgraph("sg1");
+    // => { a: "xyz" }
+
+    graph.subgraph("foo");
+    // throws an Error
+
+    graph.subgraph("sg1", "non-object value");
+    // throws an Error
+    ```
+
+h3#DotGraph-subgraphs graph.subgraphs()
+:markdown
+    Returns the ids of all subgraphs in this graph. Use
+    [`graph.subgraph(id)`](#DotGraph-subgraph) to get the value for a specific
+    subgraph.
+
+    ```js
+    graph.subgraphs();
+    // => []
+
+    graph.addSubgraph("sg1");
+    graph.addSubgraph("sg2");
+    graph.subgraphs();
+    // => [ "sg1", "sg2" ]
+    ```
+
+h3#DotGraph-parent graph.parent(id, [parent])
+:markdown
+    This function returns the current parent of the object (node, edge,
+    subgraph) with the id `id` if only one argument is supplied. If two
+    arguments are supplied this function sets the parent of `id` to the graph
+    `parent`. If `parent` is `null` this effectively sets the parent to the
+    root graph.
+
+    This function will throw an `Error` if `id` is not in the graph or if
+    `parent` is either not in the graph or is not a graph object.
+
+    ```js
+    graph.addNode(1);
+    graph.parent(1);
+    // => null
+
+    graph.addSubgraph("sg1");
+    graph.parent(1, "sg1");
+    graph.parent(1);
+    // => "sg1"
+
+    graph.parent("sg1", 1);
+    // throws an Error
+
+    graph.parent("foo", "bar");
+    // throws an Error
+    ```
+
+h3#DotGraph-children graph.children(id)
+:markdown
+    Returns the ids of all children of the graph or subgraph with the id `id`.
+    The id `null` can be used to get immediate children of the root graph.
+
+    The child values are tuples of `{ id, type }` where `id` is the object's
+    (node, edge, graph) id and `type` is one of "node", "graph", or "subgraph".
+
+    If `id` is not in this graph or if it is not the id of a graph object, this
+    function will throw an `Error`.
+
+    ```js
+    g.children(null);
+    // => []
+
+    g.addNode(1);
+    g.children(null);
+    // => [ { id: 1, type: "node" } ]
+
+    g.addSubgraph("sg1");
+    g.children(null);
+    // => [ { id: 1, type: "node" },
+    //      { id: "sg1", type: "subgraph" } ]
+
+    g.parent(1, "sg1");
+    g.children(null);
+    // => [ { id: 1, type: "node" } ]
+    g.children("sg1");
+    // => [ { id: "sg1", type: "subgraph" } ]
+    ```
+
+h3#DotGraph-addSubgraph graph.addSubgraph(id, [value])
+:markdown
+    Adds a new subgraph with the id `id` to this graph. The subgraph is
+    assigned the value of `value` if it is specified; otherwise it defaults to
+    the empty object (`{}`). If an object with the id `id` is already present
+    in the graph this function will throw an `Error`.
+
+h3#DotGraph-delSubgraph graph.delSubgraph(id)
+:markdown
+    Removes a subgraph from this graph that has the id `id`. Any children of
+    this subgraph are made children of this subgraph's parent.
+
+    If the graph does not contain a subgraph with the id `id` this function
+    will throw an `Error`.
+
+    ```js
+    g.addSubgraph("sg1");
+    g.addNode(1);
+    g.parent(1, "sg1");
+    g.children(null);
+    // => [ { id: "sg1", type: "subgraph" } ]
+
+    g.delSubgraph("sg1");
+    g.children(null);
+    // => [ { id: 1, type: "node" } ]
+    ```
