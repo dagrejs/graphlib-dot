@@ -189,6 +189,17 @@ describe("dot", function() {
       assert.equal(g.node("z").prop, 456);
     });
 
+    it("can handle quoted unicode", function() {
+      var d = "digraph { \"♖♘♗♕♔♗♘♖\" }";
+      var g = dot.parse(d);
+      assert.deepEqual(g.nodes(), ["♖♘♗♕♔♗♘♖"]);
+    });
+
+    it("fails on unquoted unicode", function() {
+      var d = "digraph { ♖♘♗♕♔♗♘♖ }";
+      assert.throws(function() { dot.parse(d); });
+    });
+
     describe("it can parse all files in test-data", function() {
       var testDataDir = path.resolve(__dirname, "test-data");
       fs.readdirSync(testDataDir).forEach(function(file) {
