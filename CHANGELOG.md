@@ -1,3 +1,12 @@
+v0.2.0
+======
+
+* Added `DotGraph` which adds more DOT-like behavior to graphlib's `Graph`. See
+  API documentation for details.
+* Added `DotDigraph` which adds more DOT-like behavior to graphlib's `Digraph`.
+  See API documentation for details.
+* `write` and `parse` now work with `DotGraph` and `DotDigraph`.
+
 v0.1.0
 ======
 
