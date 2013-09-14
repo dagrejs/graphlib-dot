@@ -36,7 +36,7 @@ Check out this project and run this command from the root of the project:
 
     $ make
 
-This will generate `graphlib-dot.js` and `graphlib-dot.min.js` in the root of the project.
+This will generate `graphlib-dot.js` and `graphlib-dot.min.js` in the `out/dist` directory.
 
 ## Example
 
