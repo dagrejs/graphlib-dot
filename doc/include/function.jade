@@ -1,15 +1,14 @@
 h2#function Functions
 :markdown
-    This module exports a few functions for parsing and writing graphs in the
-    DOT langauge. To use these functions, use `var dot =
-    require("graphlib-dot");`.
+    This module exports functions for parsing and writing graphs in the
+    DOT langauge.
 
 h3#function-parse parse()
 :markdown
     Parses a single DOT graph from the `str` and returns it as one of:
 
-    * `Digraph` if the input graph is `digraph`
-    * `Graph` if the input graph is a `graph`
+    * `DotDigraph` if the input graph is `digraph`
+    * `DotGraph` if the input graph is a `graph`
 
     ```js
     var parse = require("graphlib-dot").parse;
@@ -20,6 +19,49 @@ h3#function-parse parse()
 
     digraph.edge(digraph.edges()[0]);
     // => { label: "label", id: /* unique id here */ }
+    ```
+
+    This function treats subgraphs in the input as nodes in the final DOT
+    graph, which will have one or more children. Empty subgraphs in the input
+    are not included in the final graph.
+
+    ```js
+    var parse = require("graphlib-dot").parse;
+
+    var digraph = parse("digraph { 1; 2; subgraph X { 3; 4 }; subgraph Y {} }");
+    digraph.nodes();
+    // => [ "1", "2", "3", "4", "X" ]
+    // Note in particular that "Y" was not included because it was empty
+
+    digraph.children(null);
+    // => [ "1", "2", "X" ]
+    // Note that `null` represents the root graph
+
+    digraph.children("X");
+    // => [ "3", "4" ]
+    ```
+
+    Defaults in the input graph are applied to objects (`node`, `edge`,
+    `graph`) as described by the rules of the DOT language. However, the
+    default information itself is not preserved during the parsing process.
+    Graphviz's DOT also loses default information under most circumstances;
+    however we've opted to make it consistently always the case.
+
+    Also, unless otherwise specified we automatically add a label attribute to
+    each node that uses the node's id.
+
+    ```js
+    var parse = require("graphlib-dot").parse;
+
+    var digraph = parse("digraph { 1; node [foo=bar]; 2 }");
+    digraph.nodes();
+    // => [ "1", "2" ]
+
+    digraph.node(1);
+    // => { label: "1" }
+
+    digraph.node(2);
+    // => { label: "2", foo: "bar" }
     ```
 
 h3#function-parseMany parseMany(str)

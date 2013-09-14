@@ -43,33 +43,25 @@ describe("dot", function() {
       assert.equal(g.target(g.edges()[0]), "b");
     });
 
-    it("can parse a simple subgraph", function() {
-      var g = dot.parse("digraph { subgraph X {} }");
-      assert.sameMembers(g.subgraphs(), ["X"]);
-    });
-
-    it("can parse an anonymous subgraph", function() {
-      var g = dot.parse("digraph { subgraph {} }");
-      assert.lengthOf(g.subgraphs(), 1);
-      assert.isNotNull(g.subgraphs()[0]);
+    it("does not include empty subgraphs", function() {
+      assert.lengthOf(dot.parse("digraph { subgraph X {} }").nodes(), 0);
+      assert.lengthOf(dot.parse("digraph { subgraph {} }").nodes(), 0);
+      assert.lengthOf(dot.parse("digraph { {} }").nodes(), 0);
     });
 
     it("can parse nodes in a subgraph", function() {
       var g = dot.parse("digraph { subgraph X { a; b }; c }");
-      assert.sameMembers(g.nodes(), ["a", "b", "c"]);
-      assert.sameMembers(g.children(null).map(function(x) { return x.id; }), ["X", "c"]);
-      assert.sameMembers(g.children("X").map(function(x) { return x.id; }), ["a", "b"]);
+      assert.sameMembers(g.nodes(), ["X", "a", "b", "c"]);
+      assert.sameMembers(g.children(null), ["X", "c"]);
+      assert.sameMembers(g.children("X"), ["a", "b"]);
     });
 
     it("can parse edges in a subgraph", function() {
       var g = dot.parse("digraph { subgraph X { a; b; a -> b } }");
-      assert.sameMembers(g.nodes(), ["a", "b"]);
-      assert.sameMembers(g.children(null).map(function(x) { return x.id; }), ["X"]);
+      assert.sameMembers(g.nodes(), ["X", "a", "b"]);
+      assert.sameMembers(g.children(null), ["X"]);
       assert.lengthOf(g.edges(), 1);
-
-      var edgeId = g.edges()[0];
-      assert.equal(g.parent(edgeId), "X");
-      assert.sameMembers(g.children("X").map(function(x) { return x.id; }), ["a", "b", edgeId]);
+      assert.sameMembers(g.children("X"), ["a", "b"]);
     });
 
     it("adds default attributes to nodes", function() {

@@ -1,3 +1,8 @@
+v0.3.0
+======
+
+* Now DOT graphs in this library are based on compound graphs from graphlib.
+
 v0.2.0
 ======
 
