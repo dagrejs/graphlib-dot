@@ -28,6 +28,11 @@ describe("dot", function() {
       assert.equal(g.node("a").label, "");
     });
 
+    it("does not treat the id attribute for a node specially", function() {
+      var g = dot.parse("digraph { a [id=\"b\"]; }");
+      assert.sameMembers(g.nodes(), ["a"]);
+    });
+
     it("can parse a simple undirected edge", function() {
       var g = dot.parse("graph { a -- b }");
       assert.sameMembers(g.nodes(), ["a", "b"]);
@@ -41,6 +46,18 @@ describe("dot", function() {
       assert.lengthOf(g.edges(), 1);
       assert.equal(g.source(g.edges()[0]), "a");
       assert.equal(g.target(g.edges()[0]), "b");
+    });
+
+    it("can parse an edge with an id attribute", function() {
+      var g = dot.parse("digraph { a -> b [id=\"A\"]; }");
+      assert.sameMembers(g.edges(), ["A"]);
+      assert.equal(g.source("A"), "a");
+      assert.equal(g.target("A"), "b");
+    });
+
+    it("fails to parse a path with an id attribute", function() {
+      assert.throws(function() { dot.parse("digraph { a -> b -> c [id=\"A\"]; }"); },
+                    /.*Graph already has edge 'A'.*/);
     });
 
     it("does not include empty subgraphs", function() {
