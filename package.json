@@ -1,6 +1,6 @@
 {
   "name": "graphlib-dot",
-  "version": "0.4.1-pre",
+  "version": "0.4.1",
   "description": "A DOT language parser / writer for graphlib",
   "main": "index.js",
   "keywords": [
@@ -29,7 +29,7 @@
     "uglify-js": "1.2.3"
   },
   "dependencies": {
-    "graphlib": "0.5.3"
+    "graphlib": "0.5.4"
   },
   "author": "Chris Pettitt <chris@samsarin.com>",
   "contributors": [

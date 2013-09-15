@@ -1,3 +1,8 @@
+v0.4.1
+======
+
+* Use `id` attribute from edge as edge id when present.
+
 v0.4.0
 ======
 
