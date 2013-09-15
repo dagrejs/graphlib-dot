@@ -3,6 +3,7 @@ v0.4.0
 
 * Export this project as `graphlibDot` in the global namespace when using
   browser.js. Previously we erroneously exported with the name `graphlib`.
+* Include "./lib/dot-grammar.js" in npm package.
 
 v0.3.0
 ======
