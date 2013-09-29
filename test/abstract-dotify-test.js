@@ -12,6 +12,7 @@ module.exports = function(name, Constructor, superName, SuperConstructor) {
     it("has no nodes", function() {
       assert.equal(g.order(), 0);
       assert.lengthOf(g.nodes(), 0);
+      assert.isObject(g.graph());
     });
 
     it("has no edges", function() {
@@ -70,6 +71,58 @@ module.exports = function(name, Constructor, superName, SuperConstructor) {
       g.addNode(1);
       g.addEdge("A", 1, 1);
       assert.throws(function() { g.edge("A", "string"); });
+    });
+  });
+
+  describe("copy", function() {
+    it("copies basic nodes and edges", function() {
+      g.addNode(1);
+      g.addNode(2);
+      g.addEdge("A", 1, 2);
+
+      var copy = g.copy();
+
+      assert.sameMembers(copy.nodes(), [1, 2]);
+      assert.sameMembers(copy.edges(), ["A"]);
+      assert.sameMembers(copy.incidentNodes("A"), [1, 2]);
+    });
+
+    it("shallow copies graph values", function() {
+      g.graph().foo = "bar";
+      var copy = g.copy();
+
+      assert.equal(copy.graph().foo, "bar");
+      copy.graph().foo = "baz";
+      assert.equal(g.graph().foo, "baz");
+    });
+
+    it("shallow copies node values", function() {
+      g.addNode(1, {foo: "bar"});
+      var copy = g.copy();
+
+      assert.equal(copy.node(1).foo, "bar");
+      copy.node(1).foo = "baz";
+      assert.equal(g.node(1).foo, "baz");
+    });
+
+    it("shallow copies edge values", function() {
+      g.addNode(1);
+      g.addNode(2);
+      g.addEdge("A", 1, 2, { foo: "bar" });
+      var copy = g.copy();
+
+      assert.equal(copy.edge("A").foo, "bar");
+      copy.edge("A").foo = "baz";
+      assert.equal(g.edge("A").foo, "baz");
+    });
+
+    it("copies subgraphs", function() {
+      g.addNode(1);
+      g.addNode("sg1");
+      g.parent(1, "sg1");
+      var copy = g.copy();
+
+      assert.sameMembers(copy.children("sg1"), [1]);
     });
   });
 
