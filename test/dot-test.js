@@ -81,6 +81,14 @@ describe("dot", function() {
       assert.sameMembers(g.children("X"), ["a", "b"]);
     });
 
+    it("can parse nested subgraphs", function() {
+      var g = dot.parse("digraph { subgraph X { subgraph Y { a; b } c } }");
+      assert.sameMembers(g.nodes(), ["X", "Y", "a", "b", "c"]);
+      assert.sameMembers(g.children(null), ["X"]);
+      assert.sameMembers(g.children("X"), ["Y", "c"]);
+      assert.sameMembers(g.children("Y"), ["a", "b"]);
+    });
+
     it("adds default attributes to nodes", function() {
       var d = "digraph { node [color=black shape=box]; n1 [label=\"n1\"]; n2 [label=\"n2\"]; n1 -> n2; }";
       var g = dot.parse(d);
