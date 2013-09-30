@@ -1,3 +1,8 @@
+v0.4.3
+======
+
+* Bug fixes (nested subgraph parsing).
+
 v0.4.2
 ======
 
