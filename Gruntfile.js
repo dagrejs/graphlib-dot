@@ -51,7 +51,7 @@ module.exports = function(grunt) {
         laxbreak: true,
         '-W079': true
       },
-      src: ['Gruntfile.js', 'lib/**/*.js', 'test/**/*.js']
+      src: ['Gruntfile.js', 'lib/**/*.js', '!lib/dot-grammar.js', 'test/**/*.js']
     },
     mochacov: {
       test: {
