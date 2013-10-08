@@ -1,5 +1,4 @@
-/coverage.html
-/lib/dot-grammar.js
+/build
+/dist
 /lib/version.js
 /node_modules
-/out
