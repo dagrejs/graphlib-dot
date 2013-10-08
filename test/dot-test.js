@@ -60,6 +60,11 @@ describe('dot', function() {
                     /.*Graph already has edge 'A'.*/);
     });
 
+    it('can parse graph-level attributes', function() {
+      var g = dot.parse('digraph { foo = bar; }');
+      assert.equal(g.graph().foo, 'bar');
+    });
+
     it('does not include empty subgraphs', function() {
       assert.lengthOf(dot.parse('digraph { subgraph X {} }').nodes(), 0);
       assert.lengthOf(dot.parse('digraph { subgraph {} }').nodes(), 0);
