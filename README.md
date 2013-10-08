@@ -4,8 +4,6 @@ A DOT language parser / writer for [graphlib](https://github.com/cpettitt/graphl
 
 [![Build Status](https://secure.travis-ci.org/cpettitt/graphlib-dot.png)](http://travis-ci.org/cpettitt/graphlib-dot)
 
-[![browser support](https://ci.testling.com/cpettitt/graphlib-dot.png)](https://ci.testling.com/cpettitt/graphlib-dot)
-
 Note that graphlib-dot is current a pre-1.0.0 library. We will do our best to
 maintain backwards compatibility, for patch level increases (e.g. 0.0.1 to
 0.0.2) but make no claim to backwards compatibility across minor releases (e.g.
