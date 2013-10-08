@@ -1,3 +1,8 @@
+v0.4.5
+======
+
+* Add support for reading / writing graph and subgraph attributes.
+
 v0.4.4
 ======
 
