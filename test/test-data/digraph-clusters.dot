@@ -2,6 +2,7 @@ digraph {
     A;
     F;
     subgraph cluster1 {
+        label = foo;
         B;
         C;
     }

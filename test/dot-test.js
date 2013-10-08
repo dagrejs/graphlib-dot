@@ -81,6 +81,11 @@ describe('dot', function() {
       assert.sameMembers(g.children('X'), ['a', 'b']);
     });
 
+    it('can parse attributes in a subgraph', function() {
+      var g = dot.parse('digraph { subgraph X { foo = bar; a; } }');
+      assert.equal(g.node('X').foo, 'bar');
+    });
+
     it('can parse nested subgraphs', function() {
       var g = dot.parse('digraph { subgraph X { subgraph Y { a; b } c } }');
       assert.sameMembers(g.nodes(), ['X', 'Y', 'a', 'b', 'c']);
