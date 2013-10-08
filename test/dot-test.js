@@ -260,4 +260,24 @@ describe('dot', function() {
       assert.deepEqual(gs[1].nodes().sort(), ['B']);
     });
   });
+
+  describe('write', function() {
+    it('escapes attr keys as needed', function() {
+      var g = new DotDigraph();
+      g.addNode(1, { 'this.key.needs.quotes': 'some value' });
+      assert.isTrue(/\"this.key.needs.quotes\"/.test(dot.write(g)), 'key was not quoted');
+
+      var g2 = dot.parse(dot.write(g));
+      assert.property(g2.node(1), 'this.key.needs.quotes');
+    });
+
+    it('escapes attr values as needed', function() {
+      var g = new DotDigraph();
+      g.addNode(1, { key: 'this.val.needs.quotes' });
+      assert.isTrue(/\"this.val.needs.quotes\"/.test(dot.write(g)), 'value was not quoted');
+
+      var g2 = dot.parse(dot.write(g));
+      assert.equal(g2.node(1).key, 'this.val.needs.quotes');
+    });
+  });
 });

@@ -1,3 +1,8 @@
+v0.4.4
+======
+
+* Bug fixes for `write` (quoting keys / values as appropriate).
+
 v0.4.3
 ======
 
