@@ -249,6 +249,60 @@ describe('dot', function() {
     });
   });
 
+  /*
+   * When this library is consumed by other libraries it is possible for
+   * instanceof checks to fail, so we want to be sure all decisions about how
+   * a graph is serialized are based on properties (e.g. `isDirected`), not
+   * instanceof checks. To do this, we swap DotGraph / DotDigraph locally,
+   * reverse the `isDirected` behavior and assert that the output is based on
+   * `isDirected`.
+   */
+  describe('write consistency', function() {
+    function swapGraphBehaviors() {
+      var tmp = DotDigraph;
+      DotDigraph = DotGraph;
+      DotGraph = tmp;
+
+      var tmpDirected = DotDigraph.prototype.isDirected;
+      DotDigraph.prototype.isDirected = DotGraph.prototype.isDirected;
+      DotGraph.prototype.isDirected = tmpDirected;
+    }
+
+    beforeEach(function() {
+      swapGraphBehaviors();
+    });
+
+    afterEach(function() {
+      swapGraphBehaviors();
+    });
+
+    it('uses directed edges for directed graphs', function() {
+      var g = new DotDigraph();
+      g.addNode(1);
+      g.addNode(2);
+      g.addEdge(null, 1, 2);
+
+      var d = dot.write(g);
+      assert.match(d,    /^digraph {/);
+      assert.notMatch(d, /^graph {/);
+      assert.match(d,    /->/);
+      assert.notMatch(d, /--/);
+    });
+
+    it('uses undirected edges for undirected graphs', function() {
+      var g = new DotGraph();
+      g.addNode(1);
+      g.addNode(2);
+      g.addEdge(null, 1, 2);
+
+      var d = dot.write(g);
+      assert.match(d,    /^graph {/);
+      assert.notMatch(d, /^digraph {/);
+      assert.match(d,    /--/);
+      assert.notMatch(d, /->/);
+    });
+  });
+
   describe('parseMany', function() {
     it('fails for an empty string', function() {
       assert.throws(function() { dot.parse(''); });

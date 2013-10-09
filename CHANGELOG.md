@@ -1,7 +1,12 @@
-v0.4.6
+v0.4.7
 ======
 
 * Bug fixes for `write` (properly detect that a graph is directed).
+
+v0.4.6
+======
+
+* Partial fix for `write`. Please do not use this version. Use v0.4.7+ instead.
 
 v0.4.5
 ======
