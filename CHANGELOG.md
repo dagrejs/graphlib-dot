@@ -1,3 +1,9 @@
+v0.4.9
+======
+
+* Allow serialization of non-compound graphs.
+* Allow serialization of graphs / edges / nodes with no value (i.e. undefined).
+
 v0.4.8
 ======
 

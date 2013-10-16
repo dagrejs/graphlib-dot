@@ -4,7 +4,8 @@ var common = require('./common'),
     assert = common.assert,
     dot = require('..'),
     DotGraph = require('..').DotGraph,
-    DotDigraph = require('..').DotDigraph;
+    DotDigraph = require('..').DotDigraph,
+    Digraph = require('graphlib').Digraph;
 
 describe('dot', function() {
   describe('parse', function() {
@@ -342,6 +343,45 @@ describe('dot', function() {
 
       var g2 = dot.parse(dot.write(g));
       assert.equal(g2.node(1).key, 'this.val.needs.quotes');
+    });
+
+    it('can write a non-compound graph', function() {
+      var g = new Digraph();
+      g.graph({});
+      
+      var g2 = dot.parse(dot.write(g));
+      assert.sameMembers(g2.nodes(), []);
+      assert.sameMembers(g2.edges(), []);
+      assert.deepEqual(g2.graph(), {});
+    });
+
+    it('can write a graph without graph attributes', function() {
+      var g = new Digraph();
+
+      var g2 = dot.parse(dot.write(g));
+      assert.sameMembers(g2.nodes(), []);
+      assert.sameMembers(g2.edges(), []);
+      assert.deepEqual(g2.graph(), {});
+    });
+
+    it('can write a node without attributes', function() {
+      var g = new Digraph();
+      g.addNode(1);
+
+      var g2 = dot.parse(dot.write(g));
+      assert.sameMembers(g2.nodes(), ['1']);
+    });
+
+    it('can write an edge without attributes', function() {
+      var g = new Digraph();
+      g.addNode(1);
+      g.addNode(2);
+      g.addEdge('A', 1, 2);
+
+      var g2 = dot.parse(dot.write(g));
+      // edges don't have an id in the DOT language, so we can only assert we
+      // got one edge back.
+      assert.lengthOf(g.edges(), 1);
     });
   });
 });
