@@ -381,7 +381,7 @@ describe('dot', function() {
       var g2 = dot.parse(dot.write(g));
       // edges don't have an id in the DOT language, so we can only assert we
       // got one edge back.
-      assert.lengthOf(g.edges(), 1);
+      assert.lengthOf(g2.edges(), 1);
     });
   });
 });
