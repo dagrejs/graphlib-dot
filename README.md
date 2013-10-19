@@ -5,8 +5,8 @@ A DOT language parser / writer for [graphlib](https://github.com/cpettitt/graphl
 [![Build Status](https://secure.travis-ci.org/cpettitt/graphlib-dot.png)](http://travis-ci.org/cpettitt/graphlib-dot)
 
 Note that graphlib-dot is current a pre-1.0.0 library. We will do our best to
-maintain backwards compatibility, for patch level increases (e.g. 0.0.1 to
-0.0.2) but make no claim to backwards compatibility across minor releases (e.g.
+maintain backwards compatibility for patch level increases (e.g. 0.0.1 to
+0.0.2), but make no claim to backwards compatibility across minor releases (e.g.
 0.0.1 to 0.1.0). Watch our [CHANGELOG](CHANGELOG.md) for details on changes.
 
 # Getting graphlib-dot
@@ -15,7 +15,7 @@ maintain backwards compatibility, for patch level increases (e.g. 0.0.1 to
 
 Before installing this library you need to install the [npm package manager].
 
-To get graphlib from npm, use:
+To get graphlib-dot from npm, use:
 
     $ npm install graphlib-dot
 
