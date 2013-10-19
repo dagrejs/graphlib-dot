@@ -19,6 +19,14 @@ describe('dot', function() {
       assert.instanceOf(g, DotGraph);
     });
 
+    it('can parse and ignore the strict keyword', function() {
+      // We do not currently use the strict keyword, but we should not fail if
+      // we see it in the input.
+      var g = dot.parse('strict digraph { a }');
+      assert.deepEqual(g.graph(), {});
+      assert.sameMembers(g.nodes(), ['a']);
+    });
+
     it('can parse a graph with a single line comment', function() {
       var g = dot.parse('graph { a // comment\n }');
       assert.sameMembers(g.nodes(), ['a']);
@@ -37,6 +45,21 @@ describe('dot', function() {
     it('can parse a node with an empty attribute', function() {
       var g = dot.parse('digraph { a [label=""]; }');
       assert.equal(g.node('a').label, '');
+    });
+
+    it('can parse multiple comma-separated attributes', function() {
+      var g = dot.parse('digraph { a [label="l", foo="f", bar="b"]; }');
+      assert.equal(g.node('a').label, 'l');
+      assert.equal(g.node('a').foo, 'f');
+      assert.equal(g.node('a').bar, 'b');
+    });
+
+    it('can parse a numeric id', function() {
+      var g = dot.parse('digraph { 12; -12; 12.34; -12.34; .34; -.34 }');
+      assert.lengthOf(g.nodes(), 6);
+      ['12', '12', '12.34', '-12.34', '.34', '-.34'].forEach(function(x) {
+        assert.include(g.nodes(), x);
+      });
     });
 
     describe('ignores port and compass information', function() {
