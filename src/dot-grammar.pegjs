@@ -143,7 +143,7 @@ port
     = ':' _* id _* (':' _* compassPt)?
 
 compassPt
-    = "n" / "ne" / "e" / "se" / "s" / "sw" / "w" / "nw" / "c" / "_"
+    = "ne" / "se" / "sw" / "nw" / "n" / "e" / "s" / "w" / "c" / "_"
 
 id "identifier"
     = fst:[a-zA-Z\u0200-\u0377_] rest:[a-zA-Z\u0200-\u0377_0-9]* { return fst + rest.join(""); }

@@ -19,6 +19,16 @@ describe('dot', function() {
       assert.instanceOf(g, DotGraph);
     });
 
+    it('can parse a graph with a single line comment', function() {
+      var g = dot.parse('graph { a // comment\n }');
+      assert.sameMembers(g.nodes(), ['a']);
+    });
+
+    it('can parse a graph with a multi-line comment', function() {
+      var g = dot.parse('graph { a /* comment */ }');
+      assert.sameMembers(g.nodes(), ['a']);
+    });
+
     it('can parse a simple node', function() {
       var g = dot.parse('digraph { a }');
       assert.sameMembers(g.nodes(), ['a']);
@@ -27,6 +37,31 @@ describe('dot', function() {
     it('can parse a node with an empty attribute', function() {
       var g = dot.parse('digraph { a [label=""]; }');
       assert.equal(g.node('a').label, '');
+    });
+
+    describe('ignores port and compass information', function() {
+      // While we don't use the port information, we should not fail to parse
+      // a graph with it.
+
+      it('ignores ports', function() {
+        var g = dot.parse('digraph { a:port }');
+        assert.sameMembers(g.nodes(), ['a']);
+      });
+
+      var compass = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw', 'c', '_'];
+      compass.forEach(function(c) {
+        it('ignores the compass_pt "' + c + '"', function() {
+          var g = dot.parse('digraph { a:' + c + ' }');
+          assert.sameMembers(g.nodes(), ['a']);
+        });
+      });
+
+      compass.forEach(function(c) {
+        it ('ignores the port and compass_pt "port:' + c + '"', function() {
+          var g = dot.parse('digraph { a:port:' + c + ' }');
+          assert.sameMembers(g.nodes(), ['a']);
+        });
+      });
     });
 
     it('does not treat the id attribute for a node specially', function() {

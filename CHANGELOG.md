@@ -1,3 +1,8 @@
+v0.4.10
+=======
+
+* Fixed grammar for parsing compass and port information
+
 v0.4.9
 ======
 
