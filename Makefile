@@ -18,15 +18,11 @@ MODULE_MIN_JS = $(MODULE).min.js
 # Various files
 SRC_FILES = index.js lib/dot-grammar.js lib/version.js $(shell find lib -type f -name '*.js')
 TEST_FILES = $(shell find test -type f -name '*.js')
-DOC_JADE_FILES = $(wildcard doc/*.jade)
-DOC_STATIC_FILES = $(wildcard doc/static/*)
-
-DOC_JADE_FILES_BUILD = $(addprefix build/, $(DOC_JADE_FILES:.jade=.html))
 
 TEST_COV = build/coverage
 
 # Targets
-.PHONY: = all test lint doc release clean fullclean
+.PHONY: = all test lint release clean fullclean
 
 .DELETE_ON_ERROR:
 
@@ -47,7 +43,7 @@ build/$(MODULE_JS): browser.js node_modules $(SRC_FILES)
 build/$(MODULE_MIN_JS): build/$(MODULE_JS)
 	$(UGLIFY) $(UGLIFY_OPTS) $< > $@
 
-dist: build/$(MODULE_JS) build/$(MODULE_MIN_JS) build/doc | test
+dist: build/$(MODULE_JS) build/$(MODULE_MIN_JS) | test
 	rm -rf $@
 	mkdir -p $@
 	cp -r $^ dist
@@ -65,18 +61,6 @@ build/lint: browser.js $(filter-out lib/dot-grammar.js, $(SRC_FILES)) $(TEST_FIL
 	$(JSHINT) $?
 	touch $@
 	@echo
-
-doc: build/doc
-
-build/doc: $(DOC_JADE_FILES_BUILD) build/doc/static
-
-build/doc/%.html: doc/%.jade
-	mkdir -p $(@D)
-	$(NODE) src/docgen.js $< > $@
-
-build/doc/static: $(DOC_STATIC_FILES)
-	mkdir -p $@
-	cp $^ $@
 
 release: dist
 	src/release/release.sh $(MODULE) dist
