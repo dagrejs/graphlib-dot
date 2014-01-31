@@ -1,12 +1,8 @@
-v0.4.11
-=======
-
-* Pull in graphlib v0.7.4
-
 v0.4.10
 =======
 
 * Fixed grammar for parsing compass and port information
+* Pull in graphlib v0.7.4
 
 v0.4.9
 ======
