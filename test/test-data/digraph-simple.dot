@@ -1,5 +1,0 @@
-digraph {
-    a [label="aLabel"];
-    b [label="bLabel"];
-    a -> b [label="aToBLabel"];
-}

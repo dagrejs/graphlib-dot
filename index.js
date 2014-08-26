@@ -1,20 +1,15 @@
-var parse = require("./lib/parse"),
-    write = require("./lib/write"),
+var read = require("./lib/read-one"),
+    readMany = require("./lib/read-many"),
+    write = require("./lib/write-one"),
     version = require("./lib/version");
 
 module.exports = {
-  // DOT graphs
-  DotGraph: require("./lib/DotGraph"),
-  DotDigraph: require("./lib/DotDigraph"),
-
   // Parsing
-  parse: parse,
-  decode: parse,
-  parseMany: parse.parseMany,
+  read: read,
+  readMany: readMany,
 
   // Writing
   write: write,
-  encode: write,
 
   // Version
   version: version,

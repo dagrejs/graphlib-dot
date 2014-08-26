@@ -1,61 +1,37 @@
 {
   "name": "graphlib-dot",
-  "version": "0.4.11-pre",
+  "version": "1.0.0-pre",
   "description": "A DOT language parser / writer for graphlib",
+  "author": "Chris Pettitt <cpettitt@gmail.com>",
   "main": "index.js",
   "keywords": [
     "graph",
     "dot",
     "parse"
   ],
-  "scripts": {
-    "blanket": {
-      "pattern": "lib",
-      "data-cover-never": [
-        "node_modules",
-        "test"
-      ]
-    }
+  "dependencies": {
+    "graphlib": "git://github.com/cpettitt/graphlib.git#1.0.0-dev",
+    "lodash": "^2.4.1"
   },
   "devDependencies": {
-    "browserify": "~2.33.1",
-    "chai": "1.7.x",
-    "istanbul": "~0.1.44",
-    "jshint": "2.1.x",
-    "mocha": "1.12.x",
-    "pegjs": "0.7.x",
+    "browserify": "^5.10.1",
+    "chai": "^1.9.1",
+    "istanbul": "^0.3.0",
+    "jscs": "^1.5.9",
+    "jshint": "^2.5.5",
+    "jshint-stylish": "^0.4.0",
+    "mocha": "^1.21.4",
+    "pegjs": "^0.8.0",
     "semver": "2.1.x",
-    "uglify-js": "1.2.3"
+    "sprintf": "^0.1.4",
+    "uglify-js": "^2.4.15"
   },
-  "dependencies": {
-    "graphlib": "0.7.4"
-  },
-  "author": "Chris Pettitt <chris@samsarin.com>",
-  "contributors": [
-    "Dominic Tarr <dominic.tarr@gmail.com> (http://bit.ly/dominictarr)"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/cpettitt/graphlib-dot.git"
   },
-  "license": "MIT",
-  "testling": {
-    "files": [
-      "test/**/*.js"
-    ],
-    "browsers": [
-      "ie/8..latest",
-      "firefox/17..latest",
-      "firefox/nightly",
-      "chrome/22..latest",
-      "chrome/canary",
-      "opera/12..latest",
-      "opera/next",
-      "safari/5.1..latest",
-      "ipad/6.0..latest",
-      "iphone/6.0..latest",
-      "android-browser/4.2..latest"
-    ],
-    "harness": "mocha"
-  }
+  "contributors": [
+    "Dominic Tarr <dominic.tarr@gmail.com> (http://bit.ly/dominictarr)"
+  ],
+  "license": "MIT"
 }

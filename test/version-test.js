@@ -1,10 +1,8 @@
-var fs = require('fs'),
-    assert = require('chai').assert,
-    version = require('..').version;
+var expect = require('./chai').expect;
 
 describe('version', function() {
-  it('matches the value in package.json', function() {
-    var packageJson = JSON.parse(fs.readFileSync(__dirname + '/../package.json'));
-    assert.equal(version, packageJson.version);
+  it('should match the version from package.json', function() {
+    var packageVersion = require('../package').version;
+    expect(require('../lib/version')).to.equal(packageVersion);
   });
 });
