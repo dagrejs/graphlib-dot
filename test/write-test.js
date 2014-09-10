@@ -58,8 +58,7 @@ describe("write", function() {
     g.edge("n1", "n2");
     var str = write(g, { strict: true });
     var g2 = read(str);
-    expect(g2.hasEdge("n1", "n2")).to.be.true;
-    expect(g2.edge("n1", "n2")).to.eql({});
+    expect(g2.getEdge("n1", "n2")).to.eql({});
     expect(g2.nodeCount()).to.equal(2);
     expect(g2.edgeCount()).to.equal(1);
   });
@@ -69,8 +68,7 @@ describe("write", function() {
     g.edge("n1", "n2").foo = "bar";
     var str = write(g, { strict: true });
     var g2 = read(str);
-    expect(g2.hasEdge("n1", "n2"));
-    expect(g2.edge("n1", "n2")).to.eql({ foo: "bar" });
+    expect(g2.getEdge("n1", "n2")).to.eql({ foo: "bar" });
     expect(g2.nodeCount()).to.equal(2);
     expect(g2.edgeCount()).to.equal(1);
   });
@@ -83,7 +81,7 @@ describe("write", function() {
     var g2 = read(str);
     expect(g2.nodeEdges("n1", "n2")).to.have.length(2);
     var edgeAttrs = _.map(g2.nodeEdges("n1", "n2"), function(edge) {
-      return g2.edge(edge);
+      return g2.getEdge(edge);
     });
     expect(_.sortBy(edgeAttrs)).to.eql([
       { foo: "bar" },

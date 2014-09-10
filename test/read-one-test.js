@@ -153,7 +153,7 @@ describe("read", function() {
     it("can read an unlabelled undirected edge", function() {
       var g = read("strict graph { a -- b }");
       expect(g.edgeCount()).to.equal(1);
-      expect(g.edge("a", "b")).to.eql({});
+      expect(g.getEdge("a", "b")).to.eql({});
     });
 
     it("fails if reading an undirected edge in a directed graph", function() {
@@ -163,7 +163,7 @@ describe("read", function() {
     it("can read an unlabelled directed edge", function() {
       var g = read("strict digraph { a -> b }");
       expect(g.edgeCount()).to.equal(1);
-      expect(g.edge("a", "b")).to.eql({});
+      expect(g.getEdge("a", "b")).to.eql({});
     });
 
     it("fails if reading a directed edge in an undirected graph", function() {
@@ -172,20 +172,20 @@ describe("read", function() {
 
     it("can read an edge with attributes", function() {
       var g = read("strict digraph { a -> b [label=foo]; }");
-      expect(g.edge("a", "b")).to.eql({ label: "foo" });
+      expect(g.getEdge("a", "b")).to.eql({ label: "foo" });
     });
 
     it("can assign attributes to a path of nodes", function() {
       var g = read("strict digraph { a -> b -> c [label=foo]; }");
-      expect(g.edge("a", "b")).to.eql({ label: "foo" });
-      expect(g.edge("b", "c")).to.eql({ label: "foo" });
+      expect(g.getEdge("a", "b")).to.eql({ label: "foo" });
+      expect(g.getEdge("b", "c")).to.eql({ label: "foo" });
       expect(g.edgeCount()).to.equal(2);
     });
 
     it("assigns multiple labels if an edge is defined multiple times", function() {
       var g = read("digraph { a -> b [x=1 z=3]; a -> b [y=2 z=4] }");
       var results = _.map(g.nodeEdges("a", "b"), function(edge) {
-        return g.edge(edge);
+        return g.getEdge(edge);
       });
       expect(_.sortBy(results, "z")).to.eql([
         { x: "1", z: "3" },
@@ -196,7 +196,7 @@ describe("read", function() {
 
     it("updates an edge if it is defined multiple times in strict mode", function() {
       var g = read("strict digraph { a -> b [x=1 z=3]; a -> b [y=2 z=4] }");
-      expect(g.edge("a", "b")).to.eql({ x: "1", y: "2", z: "4" });
+      expect(g.getEdge("a", "b")).to.eql({ x: "1", y: "2", z: "4" });
       expect(g.edgeCount()).to.equal(1);
     });
   });
@@ -225,7 +225,7 @@ describe("read", function() {
       var g = read("strict digraph { subgraph X { a; b; a -> b } }");
       expect(_.sortBy(g.nodes())).to.eql(["X", "a", "b"]);
       expect(_.sortBy(g.children("X"))).to.eql(["a", "b"]);
-      expect(g.edge("a", "b")).to.eql({});
+      expect(g.getEdge("a", "b")).to.eql({});
       expect(g.edgeCount()).to.equal(1);
     });
 
@@ -280,10 +280,10 @@ describe("read", function() {
 
     it("applies edges attributes when using subgraphs as LHS or RHS", function() {
       var g = read("strict digraph { { a; b } -> { c; d } [foo=bar] }");
-      expect(g.edge("a", "c")).to.eql({ foo: "bar" });
-      expect(g.edge("a", "d")).to.eql({ foo: "bar" });
-      expect(g.edge("b", "c")).to.eql({ foo: "bar" });
-      expect(g.edge("b", "d")).to.eql({ foo: "bar" });
+      expect(g.getEdge("a", "c")).to.eql({ foo: "bar" });
+      expect(g.getEdge("a", "d")).to.eql({ foo: "bar" });
+      expect(g.getEdge("b", "c")).to.eql({ foo: "bar" });
+      expect(g.getEdge("b", "d")).to.eql({ foo: "bar" });
       expect(g.edgeCount()).to.equal(4);
     });
   });
@@ -335,7 +335,7 @@ describe("read", function() {
       var g = read("strict digraph { edge[color=black]; a -> b }");
       expect(g.node("a")).to.eql({});
       expect(g.node("b")).to.eql({});
-      expect(g.edge("a", "b")).to.eql({ color: "black" });
+      expect(g.getEdge("a", "b")).to.eql({ color: "black" });
     });
   });
 
