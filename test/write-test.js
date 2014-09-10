@@ -93,6 +93,13 @@ describe("write", function() {
     expect(g2.edgeCount()).to.equal(2);
   });
 
+  it("preserves the strict (non-multigraph) state", function() {
+    var g = new Graph();
+    var str = write(g);
+    var g2 = read(str);
+    expect(g2.isMultigraph()).to.be.false;
+  });
+
   it("can write ids that must be escaped", function() {
     var g = new Graph();
     g.node("\"n1\"");

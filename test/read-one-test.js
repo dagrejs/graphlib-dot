@@ -3,13 +3,14 @@ var _ = require("lodash"),
     read = require("..").read;
 
 describe("read", function() {
-  describe("gonlyraph", function() {
+  describe("graph", function() {
     it("can read an empty digraph", function() {
       var g = read("digraph {}");
       expect(g.nodeCount()).to.equal(0);
       expect(g.edgeCount()).to.equal(0);
       expect(g.graph()).to.eql({});
       expect(g.isDirected()).to.be.true;
+      expect(g.isMultigraph()).to.be.true;
     });
 
     it("can read an empty graph", function() {
@@ -18,6 +19,12 @@ describe("read", function() {
       expect(g.edgeCount()).to.equal(0);
       expect(g.graph()).to.eql({});
       expect(g.isDirected()).to.be.false;
+      expect(g.isMultigraph()).to.be.true;
+    });
+
+    it("can read a strict graph", function() {
+      var g = read("strict digraph {}");
+      expect(g.isMultigraph()).to.be.false;
     });
 
     it("can handle leading and trailing whitespace", function() {
