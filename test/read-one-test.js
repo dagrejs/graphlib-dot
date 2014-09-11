@@ -8,7 +8,7 @@ describe("read", function() {
       var g = read("digraph {}");
       expect(g.nodeCount()).to.equal(0);
       expect(g.edgeCount()).to.equal(0);
-      expect(g.graph()).to.eql({});
+      expect(g.getGraph()).to.eql({});
       expect(g.isDirected()).to.be.true;
       expect(g.isMultigraph()).to.be.true;
     });
@@ -17,7 +17,7 @@ describe("read", function() {
       var g = read("graph {}");
       expect(g.nodeCount()).to.equal(0);
       expect(g.edgeCount()).to.equal(0);
-      expect(g.graph()).to.eql({});
+      expect(g.getGraph()).to.eql({});
       expect(g.isDirected()).to.be.false;
       expect(g.isMultigraph()).to.be.true;
     });
@@ -31,7 +31,7 @@ describe("read", function() {
       var g = read(" digraph {} ");
       expect(g.nodeCount()).to.equal(0);
       expect(g.edgeCount()).to.equal(0);
-      expect(g.graph()).to.eql({});
+      expect(g.getGraph()).to.eql({});
       expect(g.isDirected()).to.be.true;
     });
 
@@ -39,18 +39,18 @@ describe("read", function() {
       var g = read("digraph foobar {}");
       expect(g.nodeCount()).to.equal(0);
       expect(g.edgeCount()).to.equal(0);
-      expect(g.graph()).to.eql({});
+      expect(g.getGraph()).to.eql({});
       expect(g.isDirected()).to.be.true;
     });
 
     it("can read graph attributes", function() {
       var g = read("digraph { foo = bar; }");
-      expect(g.graph()).eql({ foo: "bar" });
+      expect(g.getGraph()).eql({ foo: "bar" });
     });
 
     it("can handle various forms of whitespace", function() {
       var g = read("digraph {\tfoo\r=bar\n; }");
-      expect(g.graph()).to.eql({ foo: "bar" });
+      expect(g.getGraph()).to.eql({ foo: "bar" });
     });
   });
 
@@ -76,27 +76,27 @@ describe("read", function() {
 
     it("can read a node with an attribute", function() {
       var g = read("digraph { a [label=foo]; }");
-      expect(g.node("a")).to.eql({ label: "foo" });
+      expect(g.getNode("a")).to.eql({ label: "foo" });
     });
 
     it("can read a node with a quoted attribute", function() {
       var g = read("digraph { a [label=\"foo and bar\"]; }");
-      expect(g.node("a")).to.eql({ label: "foo and bar" });
+      expect(g.getNode("a")).to.eql({ label: "foo and bar" });
     });
 
     it("can read a node with comma-separated attributes", function() {
       var g = read("digraph { a [label=l, foo=f, bar=b]; }");
-      expect(g.node("a")).to.eql({ label: "l", foo: "f", bar: "b" });
+      expect(g.getNode("a")).to.eql({ label: "l", foo: "f", bar: "b" });
     });
 
     it("can read a node with space-separated attributes", function() {
       var g = read("digraph { a [label=l foo=f bar=b]; }");
-      expect(g.node("a")).to.eql({ label: "l", foo: "f", bar: "b" });
+      expect(g.getNode("a")).to.eql({ label: "l", foo: "f", bar: "b" });
     });
 
     it("can read a node with multiple attr defs", function() {
       var g = read("digraph { a [label=l] [foo=1] [foo=2]; }");
-      expect(g.node("a")).to.eql({ label: "l", foo: "2" });
+      expect(g.getNode("a")).to.eql({ label: "l", foo: "2" });
     });
 
     it("can read nodes with numeric ids", function() {
@@ -130,21 +130,21 @@ describe("read", function() {
 
     it("ignores node ports", function() {
       var g = read("digraph { a:port }");
-      expect(g.node("a")).to.eql({});
+      expect(g.getNode("a")).to.eql({});
     });
 
     var compass = ["n", "ne", "e", "se", "s", "sw", "w", "nw", "c", "_"];
     it("ignores node compass", function() {
       _.each(compass, function(c) {
-        expect(read("digraph { a:" + c + " }").node("a")).to.eql({});
-        expect(read("digraph { a : " + c + " }").node("a")).to.eql({});
+        expect(read("digraph { a:" + c + " }").getNode("a")).to.eql({});
+        expect(read("digraph { a : " + c + " }").getNode("a")).to.eql({});
       });
     });
 
     it("ignores node port compass", function() {
       _.each(compass, function(c) {
-        expect(read("digraph { a:port:" + c + " }").node("a")).to.eql({});
-        expect(read("digraph { a : port : " + c + " }").node("a")).to.eql({});
+        expect(read("digraph { a:port:" + c + " }").getNode("a")).to.eql({});
+        expect(read("digraph { a : port : " + c + " }").getNode("a")).to.eql({});
       });
     });
   });
@@ -211,40 +211,40 @@ describe("read", function() {
     it("reads nodes in a subgraph", function() {
       var g = read("digraph { subgraph X { a; b }; c }");
       expect(_.sortBy(g.nodes())).to.eql(["X", "a", "b", "c"]);
-      expect(_.sortBy(g.children())).to.eql(["X", "c"]);
-      expect(_.sortBy(g.children("X"))).to.eql(["a", "b"]);
+      expect(_.sortBy(g.getChildren())).to.eql(["X", "c"]);
+      expect(_.sortBy(g.getChildren("X"))).to.eql(["a", "b"]);
     });
 
     it("assigns a node to the first subgraph in which it appears", function() {
       var g = read("digraph { subgraph X { a }; subgraph Y { a; b } }");
-      expect(g.parent("a")).to.equal("X");
-      expect(g.parent("b")).to.equal("Y");
+      expect(g.getParent("a")).to.equal("X");
+      expect(g.getParent("b")).to.equal("Y");
     });
 
     it("reads edges in a subgraph", function() {
       var g = read("strict digraph { subgraph X { a; b; a -> b } }");
       expect(_.sortBy(g.nodes())).to.eql(["X", "a", "b"]);
-      expect(_.sortBy(g.children("X"))).to.eql(["a", "b"]);
+      expect(_.sortBy(g.getChildren("X"))).to.eql(["a", "b"]);
       expect(g.getEdge("a", "b")).to.eql({});
       expect(g.edgeCount()).to.equal(1);
     });
 
     it("assigns graph attributes to the subgraph in which they appear", function() {
       var g = read("strict digraph { subgraph X { foo=bar; a } }");
-      expect(g.graph()).to.eql({});
-      expect(g.node("X")).to.eql({ foo: "bar" });
+      expect(g.getGraph()).to.eql({});
+      expect(g.getNode("X")).to.eql({ foo: "bar" });
     });
 
     it("reads anonymous subgraphs #1", function() {
       var g = read("digraph { subgraph { a } }");
-      expect(g.parent("a")).to.not.be.undefined;
-      expect(g.parent(g.parent("a"))).to.be.undefined;
+      expect(g.getParent("a")).to.not.be.undefined;
+      expect(g.getParent(g.getParent("a"))).to.be.undefined;
     });
 
     it("reads anonymous subgraphs #2", function() {
       var g = read("digraph { { a } }");
-      expect(g.parent("a")).to.not.be.undefined;
-      expect(g.parent(g.parent("a"))).to.be.undefined;
+      expect(g.getParent("a")).to.not.be.undefined;
+      expect(g.getParent(g.getParent("a"))).to.be.undefined;
     });
 
     it("reads subgraphs as the LHS of an edge statement", function() {
@@ -291,50 +291,50 @@ describe("read", function() {
   describe("defaults", function() {
     it("adds default attributes to nodes", function() {
       var g = read("digraph { node [color=black]; a [label=foo]; b [label=bar] }");
-      expect(g.node("a")).to.eql({ color: "black", label: "foo" });
-      expect(g.node("b")).to.eql({ color: "black", label: "bar" });
+      expect(g.getNode("a")).to.eql({ color: "black", label: "foo" });
+      expect(g.getNode("b")).to.eql({ color: "black", label: "bar" });
     });
 
     it("can apply multiple node defaults", function() {
       var g = read("digraph { node[color=black]; node[shape=box]; a [label=foo] }");
-      expect(g.node("a")).to.eql({ color: "black", shape: "box", label: "foo" });
+      expect(g.getNode("a")).to.eql({ color: "black", shape: "box", label: "foo" });
     });
 
     it("only applies defaults already visited", function() {
       var g = read("digraph { node[color=black]; a; node[shape=box]; b; }");
-      expect(g.node("a")).to.eql({ color: "black" });
-      expect(g.node("b")).to.eql({ color: "black", shape: "box" });
+      expect(g.getNode("a")).to.eql({ color: "black" });
+      expect(g.getNode("b")).to.eql({ color: "black", shape: "box" });
     });
 
     it("only applies defaults to nodes created in the subgraph", function() {
       var g = read("digraph { a; { node[color=black]; a; b; } }");
-      expect(g.node("a")).to.eql({});
-      expect(g.node("b")).to.eql({ color: "black" });
+      expect(g.getNode("a")).to.eql({});
+      expect(g.getNode("b")).to.eql({ color: "black" });
     });
 
     it("allows defaults to redefined", function() {
       var g = read("digraph { node[color=black]; a; node[color=green]; b; }");
-      expect(g.node("a")).to.eql({ color: "black" });
-      expect(g.node("b")).to.eql({ color: "green" });
+      expect(g.getNode("a")).to.eql({ color: "black" });
+      expect(g.getNode("b")).to.eql({ color: "green" });
     });
 
     it("applies defaults to nodes created through an edge statement", function() {
       var g = read("digraph { node[color=black]; a -> b; }");
-      expect(g.node("a")).to.eql({ color: "black" });
-      expect(g.node("b")).to.eql({ color: "black" });
+      expect(g.getNode("a")).to.eql({ color: "black" });
+      expect(g.getNode("b")).to.eql({ color: "black" });
     });
 
     it("applies defaults to subgraphs", function() {
       var g = read("digraph { node[color=black]; { a; { b; c[color=green]; } } }");
-      expect(g.node("a")).to.eql({ color: "black" });
-      expect(g.node("b")).to.eql({ color: "black" });
-      expect(g.node("c")).to.eql({ color: "green" });
+      expect(g.getNode("a")).to.eql({ color: "black" });
+      expect(g.getNode("b")).to.eql({ color: "black" });
+      expect(g.getNode("c")).to.eql({ color: "green" });
     });
 
     it("applies defaults to edges", function() {
       var g = read("strict digraph { edge[color=black]; a -> b }");
-      expect(g.node("a")).to.eql({});
-      expect(g.node("b")).to.eql({});
+      expect(g.getNode("a")).to.eql({});
+      expect(g.getNode("b")).to.eql({});
       expect(g.getEdge("a", "b")).to.eql({ color: "black" });
     });
   });
