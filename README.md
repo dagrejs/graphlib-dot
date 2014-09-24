@@ -1,6 +1,6 @@
 # graphlib-dot
 
-A DOT language parser / writer for [graphlib](https://github.com/cpettitt/graphlib).
+A [DOT language](http://www.graphviz.org/content/dot-language) parser / writer for [graphlib](https://github.com/cpettitt/graphlib).
 
 [![Build Status](https://secure.travis-ci.org/cpettitt/graphlib-dot.png)](http://travis-ci.org/cpettitt/graphlib-dot)
 
@@ -8,6 +8,9 @@ Note that graphlib-dot is current a pre-1.0.0 library. We will do our best to
 maintain backwards compatibility for patch level increases (e.g. 0.0.1 to
 0.0.2), but make no claim to backwards compatibility across minor releases (e.g.
 0.0.1 to 0.1.0). Watch our [CHANGELOG](CHANGELOG.md) for details on changes.
+
+We're currently working towards a v1.0.0 release that will stabilize the API.
+Please file issues for anything that should be addressed before the switch 1.0.
 
 # Getting graphlib-dot
 
@@ -42,7 +45,7 @@ This will generate `graphlib-dot.js` and `graphlib-dot.min.js` in the `dist` dir
 var fs = require('fs')
 var dot = require('graphlib-dot')
 
-var graph = dot.parse(fs.readFileSync('your-dot-file.dot'))
+var graph = dot.read(fs.readFileSync('your-dot-file.dot'))
 // Tou can pass `graph` to dagre or some other graphlib compatible
 // graph library.
 
@@ -52,38 +55,26 @@ console.log(dot.write(graph))
 
 # API
 
-## Graph Objects
+## read(str)
 
-This library introduces two new types of graphs:
-
-1. `DotGraph` (prototype is [`CGraph`](http://cpettitt.github.io/project/graphlib/latest/doc/index.html#CGraph))
-2. `DotDigraph` (prototype is [`CDigraph`](http://cpettitt.github.io/project/graphlib/latest/doc/index.html#CDigraph))
-
-These graphs differ from the graphlib compound graphs in that they always contain
-an object for their value. This is similar to how attributes work with graphs
-in graphviz.
-
-It is possible to serialize regular graphlib graphs provided the values used
-for nodes, edges, and subgraphs are either `undefined` or are objects.
-
-## Functions
-
-### parse(str)
-
-Parses a single DOT graph from the `str` and returns it as one of:
-
-* `DotDigraph` if the input graph is `digraph`
-* `DotGraph` if the input graph is a `graph`
+Reads a single DOT graph from the `str` and returns it a `Graph`
+representation. By default the `Graph` will be a compound multigraph. Using the
+`strict` keyword changes the `Graph` to a compound graph without multi-edges.
+Use the `digraph` keyword to create a directed graph and the `graph` keyword to
+create an undirected graph.
 
 ```js
 var dot = require("graphlib-dot");
 
-var digraph = dot.parse("digraph { 1; 2; 1 -> 2 [label=\"label\"] }");
+var digraph = dot.read("digraph { 1; 2; 1 -> 2 [label=\"label\"] }");
 digraph.nodes();
 // => [ "1", "2" ]
 
-digraph.edge(digraph.edges()[0]);
-// => { label: "label", id: /* unique id here */ }
+digraph.edges();
+// => [ { v: "1", w: "2" } ]
+
+digraph.edge("1", "2");
+// => { label: "label" }
 ```
 
 This function treats subgraphs in the input as nodes in the final DOT graph,
@@ -93,14 +84,15 @@ included in the final graph.
 ```js
 var dot = require("graphlib-dot");
 
-var digraph = dot.parse("digraph { 1; 2; subgraph X { 3; 4 }; subgraph Y {} }");
+var digraph = dot.read("digraph { 1; 2; subgraph X { 3; 4 }; subgraph Y {} }");
 digraph.nodes();
 // => [ "1", "2", "3", "4", "X" ]
 // Note in particular that "Y" was not included because it was empty
 
-digraph.children(null);
+digraph.children();
 // => [ "1", "2", "X" ]
-// Note that `null` represents the root graph
+// Note that calling children without any arguments returns children without
+// a parent.
 
 digraph.children("X");
 // => [ "3", "4" ]
@@ -112,24 +104,7 @@ itself is not preserved during the parsing process. Graphviz's DOT also loses
 default information under most circumstances; however we've opted to make it
 consistently always the case.
 
-Also, unless otherwise specified we automatically add a label attribute to
-each node that uses the node's id.
-
-```js
-var dot = require("graphlib-dot");
-
-var digraph = dot.parse("digraph { 1; node [foo=bar]; 2 }");
-digraph.nodes();
-// => [ "1", "2" ]
-
-digraph.node(1);
-// => { label: "1" }
-
-digraph.node(2);
-// => { label: "2", foo: "bar" }
-```
-
-### parseMany(str)
+### readMany(str)
 
 Parses one or more DOT graphs from `str` in a manner similar to that used
 by parse for individual graphs.
@@ -137,8 +112,8 @@ by parse for individual graphs.
 ```js
 var dot = require("graphlib-dot");
 
-var digraphs = dot.parseMany("digraph { 1; 2; 1 -> 2 [label=\"label\"] }\n" +
-                             "digraph { A; B; }");
+var digraphs = dot.readMany("digraph { 1; 2; 1 -> 2 [label=\"label\"] }\n" +
+                            "digraph { A; B; }");
 digraphs.length;
 // => 2
 ```
@@ -148,20 +123,40 @@ digraphs.length;
 Writes a `String` representation of the given `graph` in the DOT language.
 
 ```js
-var Digraph = require("graphlib").Digraph,
+var Graph = require("graphlib").Graph,
     dot = require("graphlib-dot");
 
-var digraph = new Digraph();
-digraph.addNode(1);
-digraph.addNode(2);
-digraph.addEdge("A", 1, 2, { label: "A label" });
+var digraph = new Graph();
+digraph.setNode(1);
+digraph.setNode(2);
+digraph.setEdge(1, 2, { label: "A label" });
+console.log(dot.write(digraph));
+// Prints:
+//
+//  strict digraph {
+//      "1"
+//      "2"
+//      1 -> 2 [label="A label"]
+//  }
+```
+
+Note that the graph was "strict" because we did not construct it with the `multigraph` proeprty. To get a non-strict graph:
+
+```js
+var Graph = require("graphlib").Graph,
+    dot = require("graphlib-dot");
+
+var digraph = new Graph({ multigraph: true });
+digraph.setNode(1);
+digraph.setNode(2);
+digraph.setEdge(1, 2, { label: "A label" });
 console.log(dot.write(digraph));
 // Prints:
 //
 //  digraph {
 //      "1"
 //      "2"
-//      "1" -> "2" ["label"="A label"]
+//      1 -> 2 [label="A label"]
 //  }
 ```
 
