@@ -22,12 +22,11 @@ To get graphlib-dot from npm, use:
 
     $ npm install graphlib-dot
 
-## Browser Scripts
+### Bower Install
 
-You can get the latest browser-ready scripts:
+You can install graphlib-dot with bower using the following command:
 
-* [graphlib-dot.js](http://cpettitt.github.io/project/graphlib-dot/latest/graphlib-dot.js)
-* [graphlib-dot.min.js](http://cpettitt.github.io/project/graphlib-dot/latest/graphlib-dot.min.js)
+    $ bower install graphlib-dot
 
 ## Build From Source
 
