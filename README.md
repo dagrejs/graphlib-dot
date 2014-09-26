@@ -44,7 +44,7 @@ This will generate `graphlib-dot.js` and `graphlib-dot.min.js` in the `dist` dir
 var fs = require('fs')
 var dot = require('graphlib-dot')
 
-var graph = dot.read(fs.readFileSync('your-dot-file.dot'))
+var graph = dot.read(fs.readFileSync('your-dot-file.dot', 'UTF-8'));
 // Tou can pass `graph` to dagre or some other graphlib compatible
 // graph library.
 
