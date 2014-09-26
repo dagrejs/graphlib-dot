@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
  * Prints the current version from the specified package-file to stdout or
  * fails with an error if either the version cannot be determined or it is
@@ -14,9 +16,10 @@ if (!("version" in packageJson)) {
   bail("ERROR: Could not find version in package.json");
 }
 
-var ver = semver.parse(packageJson.version);
+var ver = semver.parse(packageJson.version),
+    preRelease = process.env.PRE_RELEASE;
 
-if (ver.prerelease.length > 0) {
+if (ver.prerelease.length > 0 && !preRelease) {
   bail("ERROR: version is a pre-release: " + ver);
 }
 

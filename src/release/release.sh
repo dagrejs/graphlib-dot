@@ -1,79 +1,70 @@
+# Fail on error
 set -e
-[ -n "$DEBUG" ] && set -x
+[ -n "$DEBUG"] && set -x
 
 bail() {
     echo $1 >&2
     exit 1
 }
 
-usage() {
-    bail "usage: $0 <MODULE_NAME> <DIST_DIR>"
-}
+# Initial config
+PROJECT=$1
+PROJECT_ROOT=`pwd`
+BOWER_DIR=/tmp/$PROJECT-bower
+DIST_DIR=$2
+
+# Check version. Is this a release? If not abort
+VERSION=$(./src/release/check-version.js)
+SHORT_VERSION=$(echo $VERSION | cut -f1 -d-)
+
+echo Attemping to publish version: $VERSION
 
 # Preflight checks
-# ----------------
-
-PROJECT=$1
-DIST_DIR=$2
-VERSION=$(node src/release/check-version.js)
-
-[ -n "$PROJECT" ] || usage
-[ -n "$DIST_DIR" ] || usage
-[ -n "$VERSION" ] || bail "ERROR: Could not determine version from package.json"
-
-echo Attempting to publish version: $VERSION
-
-[ -z "`git tag -l v$VERSION`" ] || bail "ERROR: There is already a tag for: v$VERSION"
-[ -n "`grep v$VERSION CHANGELOG.md`" ] || bail "ERROR: No entry for v$VERSION in CHANGELOG.md"
-[ "`git symbolic-ref --short HEAD`" = "master" ] || bail "ERROR: You must release from the master branch"
+[ -n "$PROJECT" ] || bail "No project name was specified."
+[ -n "$DIST_DIR" ] || bail "No dist dir was specified."
+[ -z "`git tag -l v$VERSION`" ] || bail "Version already published. Skipping publish."
+[ -n "`grep v$SHORT_VERSION CHANGELOG.md`" ] || bail "ERROR: No entry for v$VERSION in CHANGELOG.md"
+[ "`git rev-parse HEAD`" = "`git rev-parse master`" ] || [ -n "$PRE_RELEASE" ] || bail "ERROR: You must release from the master branch"
 [ -z "`git status --porcelain`" ] || bail "ERROR: Dirty index on working tree. Use git status to check"
 
+# Pull remote repos
+rm -rf $BOWER_DIR
+git clone git@github.com:cpettitt/$PROJECT-bower.git $BOWER_DIR
+
+# Publish bower
+rm -f $BOWER_DIR/bower.json
+rm -rf $BOWER_DIR/js
+
+mkdir $BOWER_DIR/js
+
+cp $DIST_DIR/bower.json $BOWER_DIR
+cp $DIST_DIR/$PROJECT*.js $BOWER_DIR/js
+cp $DIST_DIR/LICENSE $BOWER_DIR
+
+cd $BOWER_DIR
+git add -A
+git commit -m "Publishing bower for $PROJECT v$VERSION"
+git push -f origin master
+git tag v$VERSION
+git push origin v$VERSION
+cd $PROJECT_ROOT
+echo "Published $PROJECT to bower"
 
 # Publish tag
-# -----------
 git tag v$VERSION
 git push origin
 git push origin v$VERSION
-echo Pushed tag v$VERSION to origin
-
-
-# Publish docs + scripts
-# ----------------------
-echo Preparing to publish docs
-PROJECT_ROOT=`pwd`
-PUB_ROOT=/tmp/cpettitt-github-doc
-rm -rf $PUB_ROOT
-git clone git@github.com:cpettitt/cpettitt.github.com.git $PUB_ROOT
-cd $PUB_ROOT
-
-mkdir -p project/$PROJECT
-TARGET=project/$PROJECT/latest
-git rm -r $TARGET || true
-cp -r $PROJECT_ROOT/$DIST_DIR $TARGET
-git add $TARGET
-
-TARGET=project/$PROJECT/v$VERSION
-cp -r $PROJECT_ROOT/$DIST_DIR $TARGET
-git add $TARGET
-
-git ci -m "Publish $PROJECT v$VERSION"
-git push origin
-
-# Cleanup
-unset GIT_DIR
-unset GIT_WORK_TREE
-cd $PROJECT_ROOT
-echo Done with docs
-
+echo Published $PROJECT v$VERSION
 
 # Publish to npm
 npm publish
 echo Published to npm
 
-
 # Update patch level version + commit
-# -----------------------------------
-node src/release/bump-version.js
-git ci lib/version.js package.json -m "Bump version and set as pre-release"
+./src/release/bump-version.js
+make lib/version.js
+git commit package.json lib/version.js -m "Bump version and set as pre-release"
 git push origin
 echo Updated patch version
+
+echo Release complete!
