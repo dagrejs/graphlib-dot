@@ -1,3 +1,9 @@
+v0.5.0
+======
+
+* Rework to API and implementation to support graphlib v0.8.0.
+* Support for writing strict graphs.
+
 v0.4.10
 =======
 
