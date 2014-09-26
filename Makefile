@@ -62,7 +62,7 @@ release: dist
 	@echo
 	@echo Starting release...
 	@echo
-	@src/release/release/sh $(MOD) dist
+	@src/release/release.sh $(MOD) dist
 
 clean:
 	rm -rf $(BUILD_DIR) dist
