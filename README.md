@@ -22,7 +22,7 @@ To get graphlib-dot from npm, use:
 
     $ npm install graphlib-dot
 
-### Bower Install
+## Bower Install
 
 You can install graphlib-dot with bower using the following command:
 
