@@ -20,5 +20,5 @@
  * THE SOFTWARE.
  */
 graphlibDot = require("./index");
-grahplibDot.graphlib = require("graphlib");
+graphlibDot.graphlib = require("graphlib");
 global.graphlibDot = graphlibDot;

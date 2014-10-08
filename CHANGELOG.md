@@ -1,3 +1,8 @@
+v0.5.2
+======
+
+* Fix broken export for graphlib.
+
 v0.5.1
 ======
 
