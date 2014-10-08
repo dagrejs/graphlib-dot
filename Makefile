@@ -33,7 +33,7 @@ lib/dot-grammar.js: src/dot-grammar.pegjs
 	$(PEGJS) --allowed-start-rules "start,graphStmt" -e 'module.exports' $< $@
 
 lib/version.js: package.json
-	@src/version.js > $@
+	@src/release/make-version.js > $@
 
 $(DIRS):
 	@mkdir -p $@
