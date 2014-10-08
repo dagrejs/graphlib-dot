@@ -20,4 +20,3 @@
  * THE SOFTWARE.
  */
 global.graphlibDot = require("./index");
-global.graphlibDot.graphlib = require("graphlib");
