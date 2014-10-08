@@ -10,7 +10,7 @@
     "parse"
   ],
   "dependencies": {
-    "graphlib": "0.8.0",
+    "graphlib": "^0.8",
     "lodash": "^2.4.1"
   },
   "devDependencies": {
