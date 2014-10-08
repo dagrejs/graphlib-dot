@@ -1,3 +1,8 @@
+v0.5.1
+======
+
+* Export graphlib as a part of the browser bundle.
+
 v0.5.0
 ======
 
