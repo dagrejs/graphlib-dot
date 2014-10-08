@@ -19,6 +19,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-graphlibDot = require("./index");
-graphlibDot.graphlib = require("graphlib");
-global.graphlibDot = graphlibDot;
+global.graphlibDot = require("./index");
+global.graphlibDot.graphlib = require("graphlib");
