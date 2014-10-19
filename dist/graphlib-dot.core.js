@@ -1,3 +1,184 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (global){
+/*
+ * Copyright (c) 2012-2013 Chris Pettitt
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+global.graphlibDot = require("./index");
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./index":2}],2:[function(require,module,exports){
+var read = require("./lib/read-one"),
+    readMany = require("./lib/read-many"),
+    write = require("./lib/write-one"),
+    version = require("./lib/version");
+
+module.exports = {
+  graphlib: require("./lib/graphlib"),
+
+  // Parsing
+  read: read,
+  readMany: readMany,
+
+  // Writing
+  write: write,
+
+  // Version
+  version: version,
+
+  // For levelup encoding
+  type: "dot",
+  buffer: false
+};
+
+},{"./lib/graphlib":5,"./lib/read-many":7,"./lib/read-one":8,"./lib/version":9,"./lib/write-one":10}],3:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    Graph = require("./graphlib").Graph;
+
+module.exports = buildGraph;
+
+function buildGraph(parseTree) {
+  var isDirected = parseTree.type !== "graph",
+      isMultigraph = !parseTree.strict,
+      defaultStack = [{ node: {}, edge: {} }],
+      g = new Graph({ directed: isDirected, multigraph: isMultigraph, compound: true });
+      g.setGraph({});
+  _.each(parseTree.stmts, function(stmt) { handleStmt(g, stmt, defaultStack); });
+  return g;
+}
+
+function handleStmt(g, stmt, defaultStack, sg) {
+  switch(stmt.type) {
+    case "node": handleNodeStmt(g, stmt, defaultStack, sg); break;
+    case "edge": handleEdgeStmt(g, stmt, defaultStack, sg); break;
+    case "subgraph": handleSubgraphStmt(g, stmt, defaultStack, sg); break;
+    case "attr": handleAttrStmt(g, stmt, defaultStack); break;
+    case "inlineAttr": handleInlineAttrsStmt(g, stmt, defaultStack, sg); break;
+  }
+}
+
+function handleNodeStmt(g, stmt, defaultStack, sg) {
+  var v = stmt.id,
+      attrs = stmt.attrs;
+  maybeCreateNode(g, v, defaultStack, sg);
+  _.merge(g.node(v), attrs);
+}
+
+function handleEdgeStmt(g, stmt, defaultStack, sg) {
+  var attrs = stmt.attrs,
+      prev, curr;
+  _.each(stmt.elems, function(elem) {
+    handleStmt(g, elem, defaultStack, sg);
+
+    switch(elem.type) {
+      case "node": curr = [elem.id]; break;
+      case "subgraph": curr = collectNodeIds(elem); break;
+    }
+
+    _.each(prev, function(v) {
+      _.each(curr, function(w) {
+        var name;
+        if (g.hasEdge(v, w) && g.isMultigraph()) {
+          name = _.uniqueId("edge");
+        }
+        if (!g.hasEdge(v, w, name)) {
+          g.setEdge(v, w, _.clone(_.last(defaultStack).edge), name);
+        }
+        _.merge(g.edge(v, w, name), attrs);
+      });
+    });
+
+    prev = curr;
+  });
+}
+
+function handleSubgraphStmt(g, stmt, defaultStack, sg) {
+  var id = stmt.id;
+  if (id === undefined) {
+    id = generateSubgraphId(g);
+  }
+
+  defaultStack.push(_.clone(_.last(defaultStack)));
+
+  maybeCreateNode(g, id, defaultStack, sg);
+
+  _.each(stmt.stmts, function(s) {
+    handleStmt(g, s, defaultStack, id);
+  });
+
+  // If there are no statements remove the subgraph
+  if (!g.children(id).length) {
+    g.removeNode(id);
+  }
+
+  defaultStack.pop();
+}
+
+function handleAttrStmt(g, stmt, defaultStack) {
+  _.merge(_.last(defaultStack)[stmt.attrType], stmt.attrs);
+}
+
+function handleInlineAttrsStmt(g, stmt, defaultStack, sg) {
+  _.merge(sg ? g.node(sg) : g.graph(), stmt.attrs);
+}
+
+function generateSubgraphId(g) {
+  var id;
+  do {
+    id = _.uniqueId("sg");
+  } while (g.hasNode(id));
+  return id;
+}
+
+function maybeCreateNode(g, v, defaultStack, sg) {
+  if (!g.hasNode(v)) {
+    g.setNode(v, _.clone(_.last(defaultStack).node));
+    g.setParent(v, sg);
+  }
+}
+
+// Collect all nodes involved in a subgraph statement
+function collectNodeIds(stmt) {
+  var ids = {},
+      stack = [],
+      curr;
+
+  var push = stack.push.bind(stack);
+
+  push(stmt);
+  while(stack.length) {
+    curr = stack.pop();
+    switch(curr.type) {
+      case "node": ids[curr.id] = true; break;
+      case "edge": _.each(curr.elems, push); break;
+      case "subgraph": _.each(curr.stmts, push); break;
+    }
+  }
+
+  return _.keys(ids);
+}
+
+
+},{"./graphlib":5,"./lodash":6}],4:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -2387,3 +2568,191 @@ module.exports = (function() {
     parse:       parse
   };
 })();
+
+},{"./lodash":6}],5:[function(require,module,exports){
+/* global window */
+
+var graphlib;
+
+if (require) {
+  try {
+    graphlib = require("graphlib");
+  } catch (e) {}
+}
+
+if (!graphlib) {
+  graphlib = window.graphlib;
+}
+
+module.exports = graphlib;
+
+},{"graphlib":undefined}],6:[function(require,module,exports){
+/* global window */
+
+var lodash;
+
+if (require) {
+  try {
+    lodash = require("lodash");
+  } catch (e) {}
+}
+
+if (!lodash) {
+  lodash = window._;
+}
+
+module.exports = lodash;
+
+},{"lodash":undefined}],7:[function(require,module,exports){
+var _ = require("./lodash"),
+    grammar = require("./dot-grammar"),
+    buildGraph = require("./build-graph");
+
+module.exports = function readMany(str) {
+  var parseTree = grammar.parse(str);
+  return _.map(parseTree, buildGraph);
+};
+
+},{"./build-graph":3,"./dot-grammar":4,"./lodash":6}],8:[function(require,module,exports){
+var grammar = require("./dot-grammar"),
+    buildGraph = require("./build-graph");
+
+module.exports = function readOne(str) {
+  var parseTree = grammar.parse(str, { startRule: "graphStmt" });
+  return buildGraph(parseTree);
+};
+
+
+},{"./build-graph":3,"./dot-grammar":4}],9:[function(require,module,exports){
+module.exports = '0.5.3-pre';
+
+},{}],10:[function(require,module,exports){
+var _ = require("./lodash");
+
+module.exports = writeOne;
+
+var UNESCAPED_ID_PATTERN = /^[a-zA-Z\200-\377_][a-zA-Z\200-\377_0-9]*$/;
+
+function writeOne(g) {
+  var ec = g.isDirected() ? "->" : "--",
+      writer = new Writer();
+
+  if (!g.isMultigraph()) {
+    writer.write("strict ");
+  }
+
+  writer.writeLine((g.isDirected() ? "digraph" : "graph") + " {");
+  writer.indent();
+
+  var graphAttrs = g.graph();
+  if (_.isObject(graphAttrs)) {
+    _.each(graphAttrs, function(v, k) {
+      writer.writeLine(id(k) + "=" + id(v) + ";");
+    });
+  }
+
+  writeSubgraph(g, undefined, writer);
+
+  g.edges().forEach(function(edge) {
+    writeEdge(g, edge, ec, writer);
+  });
+
+  writer.unindent();
+  writer.writeLine("}");
+
+  return writer.toString();
+}
+
+function writeSubgraph(g, v, writer) {
+  var children = g.isCompound() ? g.children(v) : g.nodes();
+  _.each(children, function(w) {
+    if (!g.isCompound() || !g.children(w).length) {
+      writeNode(g, w, writer);
+    } else {
+      writer.writeLine("subgraph " + id(w) + " {");
+      writer.indent();
+
+      if (_.isObject(g.node(w))) {
+        _.map(g.node(w), function(val, key) {
+          writer.writeLine(id(key) + "=" + id(val) + ";");
+        });
+      }
+
+      writeSubgraph(g, w, writer);
+      writer.unindent();
+      writer.writeLine("}");
+    }
+  });
+}
+
+function writeNode(g, v, writer) {
+  writer.write(id(v));
+  writeAttrs(g.node(v), writer);
+  writer.writeLine();
+}
+
+function writeEdge(g, edge, ec, writer) {
+  var v = edge.v,
+      w = edge.w,
+      attrs = g.edge(edge);
+
+  writer.write(id(v) + " " + ec + " " + id(w));
+  writeAttrs(attrs, writer);
+  writer.writeLine();
+}
+
+function writeAttrs(attrs, writer) {
+  if (_.isObject(attrs)) {
+    var attrStrs = _.map(attrs, function(val, key) {
+      return id(key) + "=" + id(val);
+    });
+    if (attrStrs.length) {
+      writer.write(" [" + attrStrs.join(",") + "]");
+    }
+  }
+}
+
+function id(obj) {
+  if (typeof obj === "number" || obj.toString().match(UNESCAPED_ID_PATTERN)) {
+    return obj;
+  }
+
+  return "\"" + obj.toString().replace(/"/g, "\\\"") + "\"";
+}
+
+// Helper object for making a pretty printer
+function Writer() {
+  this._indent = "";
+  this._content = "";
+  this._shouldIndent = true;
+}
+
+Writer.prototype.INDENT = "  ";
+
+Writer.prototype.indent = function() {
+  this._indent += this.INDENT;
+};
+
+Writer.prototype.unindent = function() {
+  this._indent = this._indent.slice(this.INDENT.length);
+};
+
+Writer.prototype.writeLine = function(line) {
+  this.write((line || "") + "\n");
+  this._shouldIndent = true;
+};
+
+Writer.prototype.write = function(str) {
+  if (this._shouldIndent) {
+    this._shouldIndent = false;
+    this._content += this._indent;
+  }
+  this._content += str;
+};
+
+Writer.prototype.toString = function() {
+  return this._content;
+};
+
+
+},{"./lodash":6}]},{},[1]);

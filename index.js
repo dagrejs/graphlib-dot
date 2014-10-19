@@ -4,7 +4,7 @@ var read = require("./lib/read-one"),
     version = require("./lib/version");
 
 module.exports = {
-  graphlib: require("graphlib"),
+  graphlib: require("./lib/graphlib"),
 
   // Parsing
   read: read,
