@@ -1,6 +1,6 @@
 {
   "name": "graphlib-dot",
-  "version": "0.6.0-pre",
+  "version": "0.6.0",
   "main": [
     "dist/graphlib-dot.core.js",
     "dist/graphlib-dot.core.min.js"

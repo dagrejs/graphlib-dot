@@ -1,6 +1,6 @@
 {
   "name": "graphlib-dot",
-  "version": "0.6.0-pre",
+  "version": "0.6.0",
   "description": "A DOT language parser / writer for graphlib",
   "author": "Chris Pettitt <cpettitt@gmail.com>",
   "main": "index.js",
