@@ -10,19 +10,19 @@
     "parse"
   ],
   "dependencies": {
-    "graphlib": "^0.8",
+    "graphlib": "^0.9.1",
     "lodash": "^2.4.1"
   },
   "devDependencies": {
-    "browserify": "^5.10.1",
-    "chai": "^1.9.1",
-    "istanbul": "^0.3.0",
-    "jscs": "^1.5.9",
-    "jshint": "^2.5.5",
-    "jshint-stylish": "^0.4.0",
-    "mocha": "^1.21.4",
+    "browserify": "^6.1.0",
+    "chai": "^1.9.2",
+    "istanbul": "^0.3.2",
+    "jscs": "^1.7.3",
+    "jshint": "^2.5.6",
+    "jshint-stylish": "^1.0.0",
+    "mocha": "^1.21.5",
     "pegjs": "^0.8.0",
-    "semver": "2.1.x",
+    "semver": "^4.1.0",
     "sprintf": "^0.1.4",
     "uglify-js": "^2.4.15"
   },
