@@ -2624,7 +2624,7 @@ module.exports = function readOne(str) {
 
 
 },{"./build-graph":3,"./dot-grammar":4}],9:[function(require,module,exports){
-module.exports = '0.5.3-pre';
+module.exports = '0.6.0-pre';
 
 },{}],10:[function(require,module,exports){
 var _ = require("./lodash");

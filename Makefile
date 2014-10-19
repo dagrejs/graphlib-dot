@@ -77,7 +77,7 @@ release: dist
 	@src/release/release.sh $(MOD) dist
 
 clean:
-	rm -rf $(BUILD_DIR) dist
+	rm -rf $(BUILD_DIR)
 
 node_modules: package.json
 	@$(NPM) install
