@@ -2624,7 +2624,7 @@ module.exports = function readOne(str) {
 
 
 },{"./build-graph":3,"./dot-grammar":4}],9:[function(require,module,exports){
-module.exports = '0.6.0';
+module.exports = '0.6.1';
 
 },{}],10:[function(require,module,exports){
 var _ = require("./lodash");
@@ -3645,14 +3645,9 @@ Graph.prototype.setPath = function(vs, value) {
  * setEdge(v, w, [value, [name]])
  * setEdge({ v, w, [name] }, [value])
  */
-Graph.prototype.setEdge = function(v, w, value, name) {
-  var valueSpecified = arguments.length > 2;
-
-  v = String(v);
-  w = String(w);
-  if (!_.isUndefined(name)) {
-    name = String(name);
-  }
+Graph.prototype.setEdge = function() {
+  var v, w, name, value,
+      valueSpecified = false;
 
   if (_.isPlainObject(arguments[0])) {
     v = arguments[0].v;
@@ -3662,6 +3657,20 @@ Graph.prototype.setEdge = function(v, w, value, name) {
       value = arguments[1];
       valueSpecified = true;
     }
+  } else {
+    v = arguments[0];
+    w = arguments[1];
+    name = arguments[3];
+    if (arguments.length > 2) {
+      value = arguments[2];
+      valueSpecified = true;
+    }
+  }
+
+  v = "" + v;
+  w = "" + w;
+  if (!_.isUndefined(name)) {
+    name = "" + name;
   }
 
   var e = edgeArgsToId(this._isDirected, v, w, name);
@@ -3877,7 +3886,7 @@ function read(json) {
 },{"./graph":26,"./lodash":29}],29:[function(require,module,exports){
 module.exports=require(6)
 },{"/Users/cpettitt/projects/graphlib-dot/lib/lodash.js":6,"lodash":31}],30:[function(require,module,exports){
-module.exports = '0.9.1';
+module.exports = '1.0.1';
 
 },{}],31:[function(require,module,exports){
 (function (global){

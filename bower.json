@@ -1,6 +1,6 @@
 {
   "name": "graphlib-dot",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": [
     "dist/graphlib-dot.core.js",
     "dist/graphlib-dot.core.min.js"
@@ -21,7 +21,7 @@
     "test/**"
   ],
   "dependencies": {
-    "lodash": "^2.4.1",
-    "graphlib": "^0.9.1"
+    "graphlib": "^1.0.1",
+    "lodash": "^2.4.1"
   }
 }
