@@ -35,11 +35,11 @@ describe("read", function() {
       expect(g.isDirected()).to.be.true;
     });
 
-    it("safely ignores the id for the graph", function() {
+    it("safely incorporates the id for the graph", function() {
       var g = read("digraph foobar {}");
       expect(g.nodeCount()).to.equal(0);
       expect(g.edgeCount()).to.equal(0);
-      expect(g.graph()).to.eql({});
+      expect(g.graph()).to.eql({id: 'foobar'});
       expect(g.isDirected()).to.be.true;
     });
 
