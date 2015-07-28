@@ -39,7 +39,7 @@ describe("read", function() {
       var g = read("digraph foobar {}");
       expect(g.nodeCount()).to.equal(0);
       expect(g.edgeCount()).to.equal(0);
-      expect(g.graph()).to.eql({id: 'foobar'});
+      expect(g.graph()).to.eql({id: "foobar"});
       expect(g.isDirected()).to.be.true;
     });
 
