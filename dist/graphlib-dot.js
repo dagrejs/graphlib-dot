@@ -60,8 +60,9 @@ function buildGraph(parseTree) {
   var isDirected = parseTree.type !== "graph",
       isMultigraph = !parseTree.strict,
       defaultStack = [{ node: {}, edge: {} }],
+      id = parseTree.id,
       g = new Graph({ directed: isDirected, multigraph: isMultigraph, compound: true });
-      g.setGraph({});
+      g.setGraph(id === null ? {} : {id: id});
   _.each(parseTree.stmts, function(stmt) { handleStmt(g, stmt, defaultStack); });
   return g;
 }
@@ -2624,7 +2625,7 @@ module.exports = function readOne(str) {
 
 
 },{"./build-graph":3,"./dot-grammar":4}],9:[function(require,module,exports){
-module.exports = '0.6.1';
+module.exports = '0.6.2';
 
 },{}],10:[function(require,module,exports){
 var _ = require("./lodash");
@@ -2940,7 +2941,9 @@ var _ = require("../lodash"),
 module.exports = findCycles;
 
 function findCycles(g) {
-  return _.filter(tarjan(g), function(cmpt) { return cmpt.length > 1; });
+  return _.filter(tarjan(g), function(cmpt) {
+    return cmpt.length > 1 || (cmpt.length === 1 && g.hasEdge(cmpt[0], cmpt[0]));
+  });
 }
 
 },{"../lodash":29,"./tarjan":23}],17:[function(require,module,exports){
@@ -3539,6 +3542,8 @@ Graph.prototype.setParent = function(v, parent) {
   if (_.isUndefined(parent)) {
     parent = GRAPH_NODE;
   } else {
+    // Coerce parent to string
+    parent += "";
     for (var ancestor = parent;
          !_.isUndefined(ancestor);
          ancestor = this.parent(ancestor)) {
@@ -3884,20 +3889,35 @@ function read(json) {
 }
 
 },{"./graph":26,"./lodash":29}],29:[function(require,module,exports){
-module.exports=require(6)
-},{"/Users/cpettitt/projects/graphlib-dot/lib/lodash.js":6,"lodash":31}],30:[function(require,module,exports){
-module.exports = '1.0.1';
+/* global window */
+
+var lodash;
+
+if (typeof require === "function") {
+  try {
+    lodash = require("lodash");
+  } catch (e) {}
+}
+
+if (!lodash) {
+  lodash = window._;
+}
+
+module.exports = lodash;
+
+},{"lodash":31}],30:[function(require,module,exports){
+module.exports = '1.0.5';
 
 },{}],31:[function(require,module,exports){
 (function (global){
 /**
  * @license
- * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 2.4.2 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -o ./dist/lodash.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.5.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2013 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <http://lodash.com/license>
+ * Available under MIT license <https://lodash.com/license>
  */
 ;(function() {
 
@@ -5386,6 +5406,7 @@ module.exports = '1.0.1';
     var setBindData = !defineProperty ? noop : function(func, value) {
       descriptor.value = value;
       defineProperty(func, '__bindData__', descriptor);
+      descriptor.value = null;
     };
 
     /**
@@ -10031,7 +10052,7 @@ module.exports = '1.0.1';
      * debugging. See http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
      *
      * For more information on precompiling templates see:
-     * http://lodash.com/custom-builds
+     * https://lodash.com/custom-builds
      *
      * For more information on Chrome extension sandboxes see:
      * http://developer.chrome.com/stable/extensions/sandboxingEval.html
@@ -10600,7 +10621,7 @@ module.exports = '1.0.1';
      * @memberOf _
      * @type string
      */
-    lodash.VERSION = '2.4.1';
+    lodash.VERSION = '2.4.2';
 
     // add "Chaining" functions to the wrapper
     lodash.prototype.chain = wrapperChain;

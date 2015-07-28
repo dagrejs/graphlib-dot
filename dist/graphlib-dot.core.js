@@ -60,8 +60,9 @@ function buildGraph(parseTree) {
   var isDirected = parseTree.type !== "graph",
       isMultigraph = !parseTree.strict,
       defaultStack = [{ node: {}, edge: {} }],
+      id = parseTree.id,
       g = new Graph({ directed: isDirected, multigraph: isMultigraph, compound: true });
-      g.setGraph({});
+      g.setGraph(id === null ? {} : {id: id});
   _.each(parseTree.stmts, function(stmt) { handleStmt(g, stmt, defaultStack); });
   return g;
 }
@@ -2624,7 +2625,7 @@ module.exports = function readOne(str) {
 
 
 },{"./build-graph":3,"./dot-grammar":4}],9:[function(require,module,exports){
-module.exports = '0.6.0';
+module.exports = '0.6.2';
 
 },{}],10:[function(require,module,exports){
 var _ = require("./lodash");
