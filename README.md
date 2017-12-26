@@ -1,10 +1,10 @@
 # graphlib-dot
 
-A [DOT language](http://www.graphviz.org/content/dot-language) parser / writer for [graphlib](https://github.com/cpettitt/graphlib).
+A [DOT language](http://www.graphviz.org/content/dot-language) parser / writer for [graphlib](https://github.com/dagrejs/graphlib).
 
-[![Build Status](https://secure.travis-ci.org/cpettitt/graphlib-dot.png)](http://travis-ci.org/cpettitt/graphlib-dot)
+[![Build Status](https://secure.travis-ci.org/dagrejs/graphlib-dot.png)](http://travis-ci.org/dagrejs/graphlib-dot)
 
-To learn more about graphlib-dot [see our Wiki](https://github.com/cpettitt/graphlib-dot/wiki).
+To learn more about graphlib-dot [see our Wiki](https://github.com/dagrejs/graphlib-dot/wiki).
 
 # License
 
