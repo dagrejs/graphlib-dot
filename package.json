@@ -1,5 +1,5 @@
 {
-  "name": "@dagrejs/graphlib-dot",
+  "name": "graphlib-dot",
   "version": "0.6.4-pre",
   "description": "A DOT language parser / writer for graphlib",
   "author": "Chris Pettitt <cpettitt@gmail.com>",
