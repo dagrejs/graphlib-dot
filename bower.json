@@ -3,7 +3,9 @@
   "version": "0.6.3",
   "main": [
     "dist/graphlib-dot.core.js",
-    "dist/graphlib-dot.core.min.js"
+    "dist/graphlib-dot.core.min.js",
+    "dist/graphlib-dot.js",
+    "dist/graphlib-dot.min.js"
   ],
   "ignore": [
     ".*",
@@ -11,8 +13,6 @@
     "CHANGELOG.md",
     "Makefile",
     "browser.js",
-    "dist/graphlib-dot.js",
-    "dist/graphlib-dot.min.js",
     "index.js",
     "karma*",
     "lib/**",
