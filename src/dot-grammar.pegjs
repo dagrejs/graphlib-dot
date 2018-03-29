@@ -43,10 +43,10 @@ inlineAttrStmt
       var attrs = {};
       attrs[k] = v;
       return { type: "inlineAttr", attrs: attrs };
-    } 
+    }
 
 nodeStmt
-  = id:nodeId _* attrs:attrList? { return {type: "node", id: id, attrs: attrs || {}}; }
+  = nodeId:nodeId _* attrs:attrList? { return {type: "node", id: nodeId.id, port: nodeId.port, attrs: attrs || {}}; }
 
 edgeStmt
   = lhs:(nodeIdOrSubgraph) _* rhs:edgeRHS _* attrs:attrList? {
@@ -104,13 +104,16 @@ idDef
 
 nodeIdOrSubgraph
   = subgraphStmt
-  / id:nodeId { return { type: "node", id: id, attrs: {} }; }
+  / nodeId:nodeId {
+    var attrs = {}
+    return { type: "node", id: nodeId.id, port: nodeId.port, attrs: attrs };
+  }
 
 nodeId
-  = id:id _* port? { return id; }
+  = id:id _* port:port? { return { id: id, port: port }; }
 
 port
-  = ':' _* id _* (':' _* compassPt)?
+  = ':' _* id:id  _* (':' _* compassPt)? { return id; }
 
 compassPt
   = "ne" / "se" / "sw" / "nw" / "n" / "e" / "s" / "w" / "c" / "_"
