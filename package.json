@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "graphlib": "^2.1.1",
-    "lodash": "^2.4.1"
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "browserify": "^6.1.0",
