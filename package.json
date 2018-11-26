@@ -14,9 +14,9 @@
     "lodash": "^4.17.4"
   },
   "devDependencies": {
-    "browserify": "^6.1.0",
+    "browserify": "^16.2.3",
     "chai": "^1.9.2",
-    "jscs": "^1.7.3",
+    "jscs": "^3.0.7",
     "jshint": "^2.9.6",
     "jshint-stylish": "^1.0.0",
     "karma": "^3.0.0",
