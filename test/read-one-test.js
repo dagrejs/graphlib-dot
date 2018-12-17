@@ -339,6 +339,29 @@ describe("read", function() {
     });
   });
 
+  describe("ports", function() {
+    it("allows ports on edges", function() {
+      var g = read("digraph { a:foo -> b:bar -> c:baz }");
+      expect(g.edge("a", "b")).to.eql({ $out: "foo", $in: "bar" });
+      expect(g.edge("b", "c")).to.eql({ $out: "bar", $in: "baz" });
+    });
+
+    it("allow recieving port", function() {
+      var g = read("digraph { a -> b:bar }");
+      expect(g.edge("a", "b")).to.eql({ $in: "bar" });
+    });
+
+    it("allow sending port", function() {
+      var g = read("digraph { a:foo -> b }");
+      expect(g.edge("a", "b")).to.eql({ $out: "foo" });
+    });
+
+    it("allow multiple outs", function() {
+      var g = read("digraph { a:foo -> b; a:bar -> b; a:baz -> b }");
+      expect(g.edgeCount()).to.equal(3);
+    });
+  });
+
   describe("failure cases", function() {
     it("fails if the graph block is not closed", function() {
       expect(function() { read("digraph {"); }).to.throw();
