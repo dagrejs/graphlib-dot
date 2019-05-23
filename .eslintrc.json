@@ -1,0 +1,21 @@
+{
+    "rules": {
+      "space-unary-ops": [
+        2,
+        {
+          "nonwords": false,
+          "overrides": {}
+        }
+      ],
+      "no-trailing-spaces": 2,
+      "max-len": [
+        2,
+        100
+      ],
+      "quotes": [
+        2,
+        "double"
+      ]
+    }
+  }
+  

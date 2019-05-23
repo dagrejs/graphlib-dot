@@ -11,15 +11,15 @@
   ],
   "dependencies": {
     "graphlib": "^2.1.1",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "browserify": "^16.2.3",
     "chai": "^1.9.2",
-    "jscs": "^3.0.7",
+    "eslint": "^5.16.0",
     "jshint": "^2.9.6",
     "jshint-stylish": "^1.0.0",
-    "karma": "^3.0.0",
+    "karma": "^4.1.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-firefox-launcher": "^0.1.6",
     "karma-mocha": "^0.2.0",
