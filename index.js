@@ -1,7 +1,7 @@
-var read = require("./lib/read-one"),
-    readMany = require("./lib/read-many"),
-    write = require("./lib/write-one"),
-    version = require("./lib/version");
+var read = require("./lib/read-one");
+var readMany = require("./lib/read-many");
+var write = require("./lib/write-one");
+var version = require("./lib/version");
 
 module.exports = {
   graphlib: require("./lib/graphlib"),

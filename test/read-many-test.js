@@ -1,5 +1,5 @@
-var expect = require("./chai").expect,
-    readMany = require("..").readMany;
+var expect = require("./chai").expect;
+var readMany = require("..").readMany;
 
 describe("readMany", function() {
   it("can read multiple graphs", function() {

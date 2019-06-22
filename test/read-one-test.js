@@ -1,6 +1,6 @@
-var _ = require("lodash"),
-    expect = require("./chai").expect,
-    read = require("..").read;
+var _ = require("lodash");
+var expect = require("./chai").expect;
+var read = require("..").read;
 
 describe("read", function() {
   describe("graph", function() {

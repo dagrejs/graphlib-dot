@@ -1,8 +1,8 @@
-var _ = require("lodash"),
-    expect = require("./chai").expect,
-    Graph = require("graphlib").Graph,
-    read = require("..").read,
-    write = require("..").write;
+var _ = require("lodash");
+var expect = require("./chai").expect;
+var Graph = require("graphlib").Graph;
+var read = require("..").read;
+var write = require("..").write;
 
 describe("write", function() {
   it("can write an empty digraph", function() {

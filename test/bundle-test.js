@@ -3,8 +3,8 @@
 // These are smoke tests to make sure the bundles look like they are working
 // correctly.
 
-var expect = chai.expect,
-    graphlib = graphlibDot.graphlib;
+var expect = chai.expect;
+var graphlib = graphlibDot.graphlib;
 
 describe("bundle", function() {
   it("exports graphlibDot", function() {
@@ -22,8 +22,8 @@ describe("bundle", function() {
     g.setNode("b", { label: "b" });
     g.setEdge("a", "b", { label: "ab" });
 
-    var dot = graphlibDot.write(g),
-        g2 = graphlibDot.read(dot);
+    var dot = graphlibDot.write(g);
+    var g2 = graphlibDot.read(dot);
 
     expect(g2.node("a")).eqls({ label: "a" });
     expect(g2.node("b")).eqls({ label: "b" });

@@ -10,23 +10,23 @@
     "parse"
   ],
   "dependencies": {
-    "graphlib": "^2.1.1",
-    "lodash": "^4.17.4"
+    "graphlib": "^2.1.7",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "browserify": "^16.2.3",
     "chai": "^1.9.2",
-    "jscs": "^3.0.7",
+    "eslint": "^5.13.0",
     "jshint": "^2.9.6",
     "jshint-stylish": "^1.0.0",
-    "karma": "^3.0.0",
+    "karma": "^4.1.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-firefox-launcher": "^0.1.6",
     "karma-mocha": "^0.2.0",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-requirejs": "^0.2.5",
     "karma-safari-launcher": "^0.1.1",
-    "mocha": "^4.1.0",
+    "mocha": "^6.1.4",
     "pegjs": "^0.8.0",
     "phantomjs-prebuilt": "^2.1.7",
     "requirejs": "^2.1.22",
