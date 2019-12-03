@@ -25,10 +25,10 @@ global.graphlibDot = require("./index");
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./index":2}],2:[function(require,module,exports){
-var read = require("./lib/read-one"),
-    readMany = require("./lib/read-many"),
-    write = require("./lib/write-one"),
-    version = require("./lib/version");
+var read = require("./lib/read-one");
+var readMany = require("./lib/read-many");
+var write = require("./lib/write-one");
+var version = require("./lib/version");
 
 module.exports = {
   graphlib: require("./lib/graphlib"),
@@ -51,48 +51,48 @@ module.exports = {
 },{"./lib/graphlib":5,"./lib/read-many":7,"./lib/read-one":8,"./lib/version":9,"./lib/write-one":10}],3:[function(require,module,exports){
 "use strict";
 
-var _ = require("./lodash"),
-    Graph = require("./graphlib").Graph;
+var _ = require("./lodash");
+var Graph = require("./graphlib").Graph;
 
 module.exports = buildGraph;
 
 function buildGraph(parseTree) {
   var isDirected = parseTree.type !== "graph",
-      isMultigraph = !parseTree.strict,
-      defaultStack = [{ node: {}, edge: {} }],
-      id = parseTree.id,
-      g = new Graph({ directed: isDirected, multigraph: isMultigraph, compound: true });
-      g.setGraph(id === null ? {} : {id: id});
+    isMultigraph = !parseTree.strict,
+    defaultStack = [{ node: {}, edge: {} }],
+    id = parseTree.id,
+    g = new Graph({ directed: isDirected, multigraph: isMultigraph, compound: true });
+  g.setGraph(id === null ? {} : {id: id});
   _.each(parseTree.stmts, function(stmt) { handleStmt(g, stmt, defaultStack); });
   return g;
 }
 
 function handleStmt(g, stmt, defaultStack, sg) {
   switch(stmt.type) {
-    case "node": handleNodeStmt(g, stmt, defaultStack, sg); break;
-    case "edge": handleEdgeStmt(g, stmt, defaultStack, sg); break;
-    case "subgraph": handleSubgraphStmt(g, stmt, defaultStack, sg); break;
-    case "attr": handleAttrStmt(g, stmt, defaultStack); break;
-    case "inlineAttr": handleInlineAttrsStmt(g, stmt, defaultStack, sg); break;
+  case "node": handleNodeStmt(g, stmt, defaultStack, sg); break;
+  case "edge": handleEdgeStmt(g, stmt, defaultStack, sg); break;
+  case "subgraph": handleSubgraphStmt(g, stmt, defaultStack, sg); break;
+  case "attr": handleAttrStmt(g, stmt, defaultStack); break;
+  case "inlineAttr": handleInlineAttrsStmt(g, stmt, defaultStack, sg); break;
   }
 }
 
 function handleNodeStmt(g, stmt, defaultStack, sg) {
   var v = stmt.id,
-      attrs = stmt.attrs;
+    attrs = stmt.attrs;
   maybeCreateNode(g, v, defaultStack, sg);
   _.merge(g.node(v), attrs);
 }
 
 function handleEdgeStmt(g, stmt, defaultStack, sg) {
   var attrs = stmt.attrs,
-      prev, curr;
+    prev, curr;
   _.each(stmt.elems, function(elem) {
     handleStmt(g, elem, defaultStack, sg);
 
     switch(elem.type) {
-      case "node": curr = [elem.id]; break;
-      case "subgraph": curr = collectNodeIds(elem); break;
+    case "node": curr = [elem.id]; break;
+    case "subgraph": curr = collectNodeIds(elem); break;
     }
 
     _.each(prev, function(v) {
@@ -160,8 +160,8 @@ function maybeCreateNode(g, v, defaultStack, sg) {
 // Collect all nodes involved in a subgraph statement
 function collectNodeIds(stmt) {
   var ids = {},
-      stack = [],
-      curr;
+    stack = [],
+    curr;
 
   var push = stack.push.bind(stack);
 
@@ -169,9 +169,9 @@ function collectNodeIds(stmt) {
   while(stack.length) {
     curr = stack.pop();
     switch(curr.type) {
-      case "node": ids[curr.id] = true; break;
-      case "edge": _.each(curr.elems, push); break;
-      case "subgraph": _.each(curr.stmts, push); break;
+    case "node": ids[curr.id] = true; break;
+    case "edge": _.each(curr.elems, push); break;
+    case "subgraph": _.each(curr.stmts, push); break;
     }
   }
 
@@ -2578,7 +2578,9 @@ var graphlib;
 if (require) {
   try {
     graphlib = require("graphlib");
-  } catch (e) {}
+  } catch (e) {
+    // continue regardless of error
+  }
 }
 
 if (!graphlib) {
@@ -2595,7 +2597,9 @@ var lodash;
 if (require) {
   try {
     lodash = require("lodash");
-  } catch (e) {}
+  } catch (e) {
+    // continue regardless of error
+  }
 }
 
 if (!lodash) {
@@ -2605,9 +2609,9 @@ if (!lodash) {
 module.exports = lodash;
 
 },{"lodash":undefined}],7:[function(require,module,exports){
-var _ = require("./lodash"),
-    grammar = require("./dot-grammar"),
-    buildGraph = require("./build-graph");
+var _ = require("./lodash");
+var grammar = require("./dot-grammar");
+var buildGraph = require("./build-graph");
 
 module.exports = function readMany(str) {
   var parseTree = grammar.parse(str);
@@ -2615,8 +2619,8 @@ module.exports = function readMany(str) {
 };
 
 },{"./build-graph":3,"./dot-grammar":4,"./lodash":6}],8:[function(require,module,exports){
-var grammar = require("./dot-grammar"),
-    buildGraph = require("./build-graph");
+var grammar = require("./dot-grammar");
+var buildGraph = require("./build-graph");
 
 module.exports = function readOne(str) {
   var parseTree = grammar.parse(str, { startRule: "graphStmt" });
@@ -2635,8 +2639,8 @@ module.exports = writeOne;
 var UNESCAPED_ID_PATTERN = /^[a-zA-Z\200-\377_][a-zA-Z\200-\377_0-9]*$/;
 
 function writeOne(g) {
-  var ec = g.isDirected() ? "->" : "--",
-      writer = new Writer();
+  var ec = g.isDirected() ? "->" : "--";
+  var writer = new Writer();
 
   if (!g.isMultigraph()) {
     writer.write("strict ");
@@ -2693,9 +2697,9 @@ function writeNode(g, v, writer) {
 }
 
 function writeEdge(g, edge, ec, writer) {
-  var v = edge.v,
-      w = edge.w,
-      attrs = g.edge(edge);
+  var v = edge.v;
+  var w = edge.w;
+  var attrs = g.edge(edge);
 
   writer.write(id(v) + " " + ec + " " + id(w));
   writeAttrs(attrs, writer);
