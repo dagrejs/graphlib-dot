@@ -31,7 +31,7 @@ DIRS = $(BUILD_DIR)
 all: unit-test lint
 
 lib/dot-grammar.js: src/dot-grammar.pegjs
-	$(PEGJS) --allowed-start-rules "start,graphStmt" -e 'module.exports' $< $@
+	$(PEGJS) --allowed-start-rules "start,graphStmt" $< $@
 
 lib/version.js: package.json
 	@src/release/make-version.js > $@
