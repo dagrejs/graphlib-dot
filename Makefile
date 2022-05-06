@@ -11,7 +11,7 @@ PEGJS = ./node_modules/pegjs/bin/pegjs
 UGLIFY = ./node_modules/uglify-js/bin/uglifyjs
 
 ISTANBUL_OPTS = --dir $(COVERAGE_DIR) --report html
-JSHINT_OPTS = --reporter node_modules/jshint-stylish/stylish.js
+JSHINT_OPTS = --reporter node_modules/jshint-stylish/index.js
 MOCHA_OPTS = -R dot
 
 BUILD_DIR = build
@@ -31,7 +31,7 @@ DIRS = $(BUILD_DIR)
 all: unit-test lint
 
 lib/dot-grammar.js: src/dot-grammar.pegjs
-	$(PEGJS) --allowed-start-rules "start,graphStmt" -e 'module.exports' $< $@
+	$(PEGJS) --allowed-start-rules "start,graphStmt" $< $@
 
 lib/version.js: package.json
 	@src/release/make-version.js > $@
