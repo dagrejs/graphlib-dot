@@ -34,7 +34,7 @@
     "karma-mocha": "2.0.1",
     "karma-requirejs": "1.1.0",
     "karma-safari-launcher": "1.0.0",
-    "mocha": "8.2.0",
+    "mocha": "10.2.0",
     "pegjs": "0.10.0",
     "requirejs": "2.3.6",
     "semver": "7.3.2",
