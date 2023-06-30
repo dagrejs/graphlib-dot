@@ -1,6 +1,6 @@
 var _ = require("lodash");
 var expect = require("./chai").expect;
-var Graph = require("graphlib").Graph;
+var Graph = require("@dagrejs/graphlib").Graph;
 var read = require("..").read;
 var write = require("..").write;
 
