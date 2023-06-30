@@ -4,7 +4,7 @@ var write = require("./lib/write-one");
 var version = require("./lib/version");
 
 module.exports = {
-  graphlib: require("./lib/graphlib"),
+  graphlib: require("@dagrejs/graphlib"),
 
   // Parsing
   read: read,
