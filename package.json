@@ -1,16 +1,24 @@
 {
-  "name": "graphlib-dot",
+  "name": "@dagrejs/graphlib-dot",
   "version": "0.6.5-pre",
   "description": "A DOT language parser / writer for graphlib",
   "author": "Chris Pettitt <cpettitt@gmail.com>",
+  "contributors": [
+    "Dominic Tarr <dominic.tarr@gmail.com> (http://bit.ly/dominictarr)"
+  ],
+  "license": "MIT",
   "main": "index.js",
+  "scripts": {
+    "lint": "make lint",
+    "test": "make test"
+  },
   "keywords": [
     "graph",
     "dot",
     "parse"
   ],
   "dependencies": {
-    "graphlib": "2.1.8",
+    "@dagrejs/graphlib": "2.1.13",
     "lodash": "4.17.19"
   },
   "devDependencies": {
@@ -36,9 +44,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/dagrejs/graphlib-dot.git"
-  },
-  "contributors": [
-    "Dominic Tarr <dominic.tarr@gmail.com> (http://bit.ly/dominictarr)"
-  ],
-  "license": "MIT"
+  }
 }
