@@ -20,9 +20,7 @@ DIST_DIR = dist
 
 SRC_FILES = index.js lib/dot-grammar.js lib/version.js $(shell find lib -type f -name '*.js')
 TEST_FILES = $(shell find test -type f -name '*.js' | grep -v 'bundle-test.js')
-BUILD_FILES = $(addprefix $(BUILD_DIR)/, \
-						$(MOD).js $(MOD).min.js \
-						$(MOD).core.js $(MOD).core.min.js)
+BUILD_FILES = $(addprefix $(BUILD_DIR)/, $(MOD).js $(MOD).min.js)
 
 DIRS = $(BUILD_DIR)
 
@@ -44,9 +42,8 @@ test: unit-test browser-test
 unit-test: $(SRC_FILES) $(TEST_FILES) node_modules | $(BUILD_DIR)
 	@$(ISTANBUL) cover $(ISTANBUL_OPTS) $(MOCHA) --dir $(COVERAGE_DIR) -- $(MOCHA_OPTS) $(TEST_FILES) || $(MOCHA) $(MOCHA_OPTS) $(TEST_FILES)
 
-browser-test: $(BUILD_DIR)/$(MOD).js $(BUILD_DIR)/$(MOD).core.js
+browser-test: $(BUILD_DIR)/$(MOD).js
 	$(KARMA) start --single-run $(KARMA_OPTS)
-	$(KARMA) start karma.core.conf.js --single-run $(KARMA_OPTS)
 
 lint:
 	@$(JSHINT) $(JSHINT_OPTS) $(filter-out node_modules lib/dot-grammar.js, $?)
@@ -59,12 +56,6 @@ $(BUILD_DIR)/$(MOD).js: browser.js $(SRC_FILES) | unit-test
 	@$(BROWSERIFY) $< > $@
 
 $(BUILD_DIR)/$(MOD).min.js: $(BUILD_DIR)/$(MOD).js
-	@$(UGLIFY) $< --comments '@license' > $@
-
-$(BUILD_DIR)/$(MOD).core.js: browser.js | unit-test
-	@$(BROWSERIFY) $< > $@ --no-bundle-external
-
-$(BUILD_DIR)/$(MOD).core.min.js: $(BUILD_DIR)/$(MOD).core.js
 	@$(UGLIFY) $< --comments '@license' > $@
 
 dist: $(BUILD_FILES) | bower.json test
