@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@dagrejs/graphlib": "2.1.13",
-    "lodash": "4.17.19"
+    "lodash": "4.17.21"
   },
   "devDependencies": {
     "browserify": "16.5.1",
