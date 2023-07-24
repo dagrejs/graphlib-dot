@@ -306,9 +306,10 @@ describe("read", () => {
     });
 
     it("only applies defaults to nodes created in the subgraph", () => {
-      var g = read("digraph { a; { node[color=black]; a; b; } }");
+      var g = read("digraph { a; { node[color=black]; a; b; }; c }");
       expect(g.node("a")).to.eql({});
       expect(g.node("b")).to.eql({ color: "black" });
+      expect(g.node("c")).to.eql({});
     });
 
     it("allows defaults to redefined", () => {
