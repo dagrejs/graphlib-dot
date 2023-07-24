@@ -1,4 +1,3 @@
-var _ = require("lodash");
 var expect = require("./chai").expect;
 var Graph = require("@dagrejs/graphlib").Graph;
 var read = require("..").read;
@@ -80,10 +79,8 @@ describe("write", function() {
     var str = write(g);
     var g2 = read(str);
     expect(g2.nodeEdges("n1", "n2")).to.have.length(2);
-    var edgeAttrs = _.map(g2.nodeEdges("n1", "n2"), function(edge) {
-      return g2.edge(edge);
-    });
-    expect(_.sortBy(edgeAttrs)).to.eql([
+    var edgeAttrs = g2.nodeEdges("n1", "n2").map(edge => g2.edge(edge));
+    expect(edgeAttrs.sort()).to.eql([
       { foo: "bar" },
       { foo: "baz" }
     ]);

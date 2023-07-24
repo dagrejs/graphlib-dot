@@ -1,4 +1,3 @@
-var _ = require("lodash");
 var expect = require("./chai").expect;
 var read = require("..").read;
 
@@ -102,7 +101,7 @@ describe("read", function() {
     it("can read nodes with numeric ids", function() {
       var list = ["12", "-12", "12.34", "-12.34", ".34", "-.34", "12.", "-12."];
       var g = read("digraph { " + list.join(";") + " }");
-      expect(_.sortBy(g.nodes())).to.eql(_.sortBy(list));
+      expect(g.nodes().sort()).to.eql(list.sort());
     });
 
     it("can read escaped quotes", function() {
@@ -125,7 +124,7 @@ describe("read", function() {
     it("treats a number id followed by a letter as two nodes", function() {
       // Yes this is what the language specifies!
       var g = read("digraph { 123a }");
-      expect(_.sortBy(g.nodes())).to.eql(["123", "a"]);
+      expect(g.nodes().sort()).to.eql(["123", "a"]);
     });
 
     it("ignores node ports", function() {
@@ -135,14 +134,14 @@ describe("read", function() {
 
     var compass = ["n", "ne", "e", "se", "s", "sw", "w", "nw", "c", "_"];
     it("ignores node compass", function() {
-      _.each(compass, function(c) {
+      compass.forEach(c => {
         expect(read("digraph { a:" + c + " }").node("a")).to.eql({});
         expect(read("digraph { a : " + c + " }").node("a")).to.eql({});
       });
     });
 
     it("ignores node port compass", function() {
-      _.each(compass, function(c) {
+      compass.forEach(c => {
         expect(read("digraph { a:port:" + c + " }").node("a")).to.eql({});
         expect(read("digraph { a : port : " + c + " }").node("a")).to.eql({});
       });
@@ -184,10 +183,10 @@ describe("read", function() {
 
     it("assigns multiple labels if an edge is defined multiple times", function() {
       var g = read("digraph { a -> b [x=1 z=3]; a -> b [y=2 z=4] }");
-      var results = _.map(g.nodeEdges("a", "b"), function(edge) {
+      var results = g.nodeEdges("a", "b").map(edge => {
         return g.edge(edge);
       });
-      expect(_.sortBy(results, "z")).to.eql([
+      expect(results.sort((a, b) => a.z - b.z)).to.eql([
         { x: "1", z: "3" },
         { y: "2", z: "4" }
       ]);
@@ -210,9 +209,9 @@ describe("read", function() {
 
     it("reads nodes in a subgraph", function() {
       var g = read("digraph { subgraph X { a; b }; c }");
-      expect(_.sortBy(g.nodes())).to.eql(["X", "a", "b", "c"]);
-      expect(_.sortBy(g.children())).to.eql(["X", "c"]);
-      expect(_.sortBy(g.children("X"))).to.eql(["a", "b"]);
+      expect(g.nodes().sort()).to.eql(["X", "a", "b", "c"]);
+      expect(g.children().sort()).to.eql(["X", "c"]);
+      expect(g.children("X").sort()).to.eql(["a", "b"]);
     });
 
     it("assigns a node to the first subgraph in which it appears", function() {
@@ -223,8 +222,8 @@ describe("read", function() {
 
     it("reads edges in a subgraph", function() {
       var g = read("strict digraph { subgraph X { a; b; a -> b } }");
-      expect(_.sortBy(g.nodes())).to.eql(["X", "a", "b"]);
-      expect(_.sortBy(g.children("X"))).to.eql(["a", "b"]);
+      expect(g.nodes().sort()).to.eql(["X", "a", "b"]);
+      expect(g.children("X").sort()).to.eql(["a", "b"]);
       expect(g.edge("a", "b")).to.eql({});
       expect(g.edgeCount()).to.equal(1);
     });
