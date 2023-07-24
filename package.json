@@ -1,6 +1,6 @@
 {
   "name": "@dagrejs/graphlib-dot",
-  "version": "0.6.5-pre",
+  "version": "1.0.0",
   "description": "A DOT language parser / writer for graphlib",
   "author": "Chris Pettitt <cpettitt@gmail.com>",
   "contributors": [
@@ -18,8 +18,7 @@
     "parse"
   ],
   "dependencies": {
-    "@dagrejs/graphlib": "2.1.13",
-    "lodash": "4.17.21"
+    "@dagrejs/graphlib": "2.1.13"
   },
   "devDependencies": {
     "browserify": "17.0.0",
