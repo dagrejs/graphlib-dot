@@ -6,17 +6,17 @@
 var expect = chai.expect;
 var graphlib = graphlibDot.graphlib;
 
-describe("bundle", function() {
-  it("exports graphlibDot", function() {
+describe("bundle", () => {
+  it("exports graphlibDot", () => {
     expect(graphlibDot).to.be.an("object");
-    ["read", "readMany", "write"].forEach(function(fn) {
+    ["read", "readMany", "write"].forEach(fn => {
       expect(graphlibDot[fn]).to.be.a("function");
     });
     expect(graphlibDot.graphlib).to.be.an("object");
     expect(graphlibDot.version).to.be.a("string");
   });
 
-  it("can serialize to DOT and back", function() {
+  it("can serialize to DOT and back", () => {
     var g = new graphlib.Graph();
     g.setNode("a", { label: "a" });
     g.setNode("b", { label: "b" });
