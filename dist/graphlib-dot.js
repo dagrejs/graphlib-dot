@@ -104,7 +104,7 @@ function handleEdgeStmt(g, stmt, defaultStack, sg) {
             name = uniqueId("edge");
           }
           if (!g.hasEdge(v, w, name)) {
-            g.setEdge(v, w, Object.assign({}, defaultStack[defaultStack.length - 1].edge), name);
+            g.setEdge(v, w, structuredClone(defaultStack[defaultStack.length - 1].edge), name);
           }
           Object.assign(g.edge(v, w, name), attrs);
         });
@@ -121,7 +121,7 @@ function handleSubgraphStmt(g, stmt, defaultStack, sg) {
     id = generateSubgraphId(g);
   }
 
-  defaultStack.push(Object.assign({}, defaultStack[defaultStack.length - 1]));
+  defaultStack.push(structuredClone(defaultStack[defaultStack.length - 1]));
 
   maybeCreateNode(g, id, defaultStack, sg);
 
@@ -157,7 +157,7 @@ function generateSubgraphId(g) {
 
 function maybeCreateNode(g, v, defaultStack, sg) {
   if (!g.hasNode(v)) {
-    g.setNode(v, Object.assign({}, defaultStack[defaultStack.length - 1].node));
+    g.setNode(v, structuredClone(defaultStack[defaultStack.length - 1].node));
     g.setParent(v, sg);
   }
 }
@@ -2599,7 +2599,7 @@ module.exports = function readOne(str) {
 
 
 },{"./build-graph":3,"./dot-grammar":4}],7:[function(require,module,exports){
-module.exports = '1.0.0';
+module.exports = '1.0.2';
 
 },{}],8:[function(require,module,exports){
 module.exports = writeOne;
